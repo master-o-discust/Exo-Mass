@@ -271,14 +271,14 @@ class LoginHandler:
         try:
             logger.info(f"📝 {email} - Filling login form...")
             
-            # Wait for form elements to be available
+            # Wait for form elements to be available - use exact selectors from debug script
             await page.wait_for_selector('input[type="email"], input[name="email"], input[id="email"]', timeout=10000)
             
-            # Find and fill email field
+            # Find and fill email field - prioritize exact selectors found by debug script
             email_selectors = [
-                'input[type="email"]',
-                'input[name="email"]',
-                'input[id="email"]',
+                'input[type="email"]',  # Epic Games uses this - most reliable
+                'input[name="email"]',  # Epic Games has name="email"
+                'input[id="email"]',    # Epic Games has id="email"
                 'input[placeholder*="email" i]',
                 'input[aria-label*="email" i]'
             ]
@@ -303,11 +303,11 @@ class LoginHandler:
             # Small delay between fields
             await asyncio.sleep(random.uniform(0.5, 1.5))
             
-            # Find and fill password field
+            # Find and fill password field - prioritize exact selectors found by debug script
             password_selectors = [
-                'input[type="password"]',
-                'input[name="password"]',
-                'input[id="password"]',
+                'input[type="password"]',  # Epic Games uses this - most reliable
+                'input[name="password"]',  # Epic Games has name="password"
+                'input[id="password"]',    # Epic Games has id="password"
                 'input[placeholder*="password" i]',
                 'input[aria-label*="password" i]'
             ]
@@ -350,15 +350,17 @@ class LoginHandler:
                 logger.info(f"❌ {email} - Failed to solve Turnstile before submission: {challenge_result.get('error', 'Unknown error')}")
                 return False
             
-            # Find and click submit button
+            # Find and click submit button - prioritize exact selectors found by debug script
             submit_selectors = [
-                'button[type="submit"]',
+                'button[type="submit"]',           # Epic Games uses this - most reliable
+                'button:has-text("Continue")',     # Epic Games uses "Continue" text - CRITICAL
+                'button[id="continue"]',           # Epic Games has id="continue"
                 'input[type="submit"]',
-                'button[id*="login" i]',
-                'button[id*="signin" i]',
                 'button:has-text("Sign In")',
                 'button:has-text("Log In")',
                 'button:has-text("Login")',
+                'button[id*="login" i]',
+                'button[id*="signin" i]',
                 '.login-button',
                 '.signin-button'
             ]

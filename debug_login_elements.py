@@ -6,8 +6,9 @@ Maps all form fields, buttons, and interactive elements for proper automation
 
 import asyncio
 import logging
-from patchright.async_api import async_playwright
+from playwright.async_api import async_playwright
 from config.settings import LOGIN_URL
+from utils.unified_turnstile_handler import create_turnstile_handler
 import json
 
 logging.basicConfig(level=logging.INFO)
@@ -15,6 +16,9 @@ logger = logging.getLogger(__name__)
 
 async def analyze_login_page():
     """Analyze the Epic Games login page to map all interactive elements"""
+    
+    # Create turnstile handler for CloudFlare challenge solving
+    turnstile_handler = create_turnstile_handler()
     
     async with async_playwright() as p:
         # Launch browser with realistic settings
@@ -48,9 +52,37 @@ async def analyze_login_page():
             
             # Check if we're blocked by CloudFlare
             page_content = await page.content()
-            if any(indicator in page_content.lower() for indicator in ['cloudflare', 'checking your browser', 'verifying']):
-                logger.warning("🛡️ CloudFlare challenge detected - manual intervention may be needed")
-                await asyncio.sleep(10)  # Wait for manual solving if needed
+            cloudflare_indicators = [
+                'cloudflare', 'checking your browser', 'verifying', 'turnstile',
+                'enable javascript and cookies to continue', 'challenge-platform',
+                'cdn-cgi/challenge-platform', '_cf_chl_opt', 'window._cf_chl_opt'
+            ]
+            
+            if any(indicator in page_content.lower() for indicator in cloudflare_indicators):
+                logger.warning("🛡️ CloudFlare challenge detected - attempting to solve with Turnstile handler...")
+                
+                # Use the unified turnstile handler to solve the challenge
+                challenge_result = await turnstile_handler.solve_turnstile_challenge(page)
+                
+                if challenge_result.get('success'):
+                    logger.info("✅ CloudFlare challenge solved successfully!")
+                    # Wait for page to settle after challenge resolution
+                    await asyncio.sleep(5)
+                    
+                    # Check if we're now on the correct page
+                    current_url = page.url
+                    logger.info(f"🔗 URL after challenge resolution: {current_url}")
+                    
+                    # Take another screenshot after resolution
+                    await page.screenshot(path="login_page_after_cf.png", full_page=True)
+                    logger.info("📸 Post-CloudFlare screenshot saved")
+                else:
+                    logger.error(f"❌ Failed to solve CloudFlare challenge: {challenge_result.get('error', 'Unknown error')}")
+                    # Still take a screenshot for debugging
+                    await page.screenshot(path="login_page_cf_failed.png", full_page=True)
+                    logger.info("📸 CloudFlare failure screenshot saved")
+            else:
+                logger.info("✅ No CloudFlare challenge detected")
             
             # Take screenshot
             await page.screenshot(path="login_page_analysis.png", full_page=True)

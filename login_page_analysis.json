@@ -1,0 +1,88 @@
+{
+  "url": "https://www.epicgames.com/id/login",
+  "timestamp": "33189.792139254",
+  "email_elements": [
+    {
+      "selector": "input[type=\"email\"]",
+      "id": "email",
+      "name": "email",
+      "placeholder": null,
+      "type": "email",
+      "visible": true
+    },
+    {
+      "selector": "input[name*=\"email\"]",
+      "id": "email",
+      "name": "email",
+      "placeholder": null,
+      "type": "email",
+      "visible": true
+    },
+    {
+      "selector": "input[id*=\"email\"]",
+      "id": "email",
+      "name": "email",
+      "placeholder": null,
+      "type": "email",
+      "visible": true
+    }
+  ],
+  "password_elements": [
+    {
+      "selector": "input[type=\"password\"]",
+      "id": "password",
+      "name": "password",
+      "placeholder": null,
+      "visible": true
+    },
+    {
+      "selector": "input[name*=\"password\"]",
+      "id": "password",
+      "name": "password",
+      "placeholder": null,
+      "visible": true
+    },
+    {
+      "selector": "input[id*=\"password\"]",
+      "id": "password",
+      "name": "password",
+      "placeholder": null,
+      "visible": true
+    },
+    {
+      "selector": "input[name*=\"pass\"]",
+      "id": "password",
+      "name": "password",
+      "placeholder": null,
+      "visible": true
+    },
+    {
+      "selector": "input[id*=\"pass\"]",
+      "id": "password",
+      "name": "password",
+      "placeholder": null,
+      "visible": true
+    }
+  ],
+  "button_elements": [
+    {
+      "selector": "button[type=\"submit\"]",
+      "id": "continue",
+      "class": "MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeX-large MuiButton-containedSizeX-large MuiButton-colorPrimary MuiButton-disableElevation MuiButton-fullWidth MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeX-large MuiButton-containedSizeX-large MuiButton-colorPrimary MuiButton-disableElevation MuiButton-fullWidth mui-m4oxrl",
+      "text": "Continue",
+      "type": "submit",
+      "visible": true,
+      "enabled": true
+    },
+    {
+      "selector": "button:has-text(\"Continue\")",
+      "id": "continue",
+      "class": "MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeX-large MuiButton-containedSizeX-large MuiButton-colorPrimary MuiButton-disableElevation MuiButton-fullWidth MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeX-large MuiButton-containedSizeX-large MuiButton-colorPrimary MuiButton-disableElevation MuiButton-fullWidth mui-m4oxrl",
+      "text": "Continue",
+      "type": "submit",
+      "visible": true,
+      "enabled": true
+    }
+  ],
+  "captcha_elements": []
+}
