@@ -1,0 +1,580 @@
+"""
+Browser management module for Epic Games account checking
+Handles browser initialization, context management, and proxy configuration
+Enhanced with resource monitoring and leak prevention
+"""
+import asyncio
+import logging
+import random
+import psutil
+import gc
+import time
+from typing import List, Dict, Optional, Any
+from urllib.parse import urlparse
+
+from config.settings import (
+    HEADLESS, 
+    NAVIGATION_TIMEOUT, 
+    MAX_CONCURRENT_CHECKS,
+    BLOCK_RESOURCE_TYPES,
+    BROWSER_SLOWMO,
+    USE_ENHANCED_BROWSER,
+    PREFERRED_BROWSER_TYPE,
+    DEBUG_ENHANCED_FEATURES,
+    MAX_CONTEXTS_PER_BROWSER,
+    CONTEXT_REUSE_COUNT,
+    CLEANUP_INTERVAL,
+    MEMORY_THRESHOLD_MB,
+    MAX_BROWSER_AGE_SECONDS,
+    RESOURCE_CHECK_INTERVAL,
+    ENABLE_RESOURCE_MONITORING
+)
+
+logger = logging.getLogger(__name__)
+
+try:
+    from patchright.async_api import async_playwright as patchright_async
+    PATCHRIGHT_AVAILABLE = True
+except ImportError:
+    PATCHRIGHT_AVAILABLE = False
+    logger.error("Patchright not available - enhanced browser required!")
+
+try:
+    from camoufox.async_api import AsyncCamoufox
+    CAMOUFOX_AVAILABLE = True
+except ImportError:
+    CAMOUFOX_AVAILABLE = False
+    logger.warning("Camoufox not available, using Chromium-based browsers only")
+
+
+class BrowserManager:
+    """Manages browser instances, contexts, and proxy configurations with enhanced resource monitoring"""
+    
+    def __init__(self, proxies: List[str] = None):
+        self.proxies = proxies or []
+        self.playwright = None
+        self.browser_pool: Dict[str, Any] = {}
+        self.context_pool: Dict[str, List[Any]] = {}
+        self.semaphore = asyncio.Semaphore(MAX_CONCURRENT_CHECKS)
+        
+        # Performance optimization settings
+        self.max_contexts_per_browser = MAX_CONTEXTS_PER_BROWSER
+        self.context_reuse_count = CONTEXT_REUSE_COUNT
+        self.context_usage_counter: Dict[str, int] = {}
+        self.cleanup_interval = CLEANUP_INTERVAL
+        self.checks_performed = 0
+        
+        # Single proxy handling
+        self.single_proxy_mode = len(self.proxies) == 1
+        self.current_proxy_index = 0
+        
+        # User agent management - use centralized manager
+        from utils.user_agent_manager import user_agent_manager
+        self.user_agent_manager = user_agent_manager
+        self._ua_toggle = True
+        
+        # Resource monitoring
+        self.process = psutil.Process() if ENABLE_RESOURCE_MONITORING else None
+        self.initial_memory = (self.process.memory_info().rss / 1024 / 1024 
+                              if self.process else 0)  # MB
+        self.last_cleanup_time = time.time()
+        self.resource_check_interval = RESOURCE_CHECK_INTERVAL
+        self.memory_threshold_mb = MEMORY_THRESHOLD_MB
+        self.max_browser_age_seconds = MAX_BROWSER_AGE_SECONDS
+        self.browser_creation_times: Dict[str, float] = {}
+    
+    async def __aenter__(self):
+        """Initialize enhanced browser automation"""
+        if DEBUG_ENHANCED_FEATURES:
+            logger.info("🚀 Initializing enhanced browser automation")
+        
+        if PATCHRIGHT_AVAILABLE:
+            self.playwright = await patchright_async().start()
+            if DEBUG_ENHANCED_FEATURES:
+                logger.info("✅ Using Patchright for enhanced stealth")
+        else:
+            # Fallback to regular playwright if available
+            try:
+                from playwright.async_api import async_playwright
+                self.playwright = await async_playwright().start()
+                logger.info("⚠️ Using regular Playwright (Patchright not available)")
+            except ImportError:
+                raise RuntimeError("Neither Patchright nor Playwright is available!")
+        
+        return self
+    
+    async def __aexit__(self, _exc_type, _exc_val, _exc_tb):
+        """Clean up browsers and Playwright"""
+        for browser in self.browser_pool.values():
+            try:
+                await browser.close()
+            except Exception:
+                pass
+        
+        if self.playwright:
+            await self.playwright.stop()
+    
+    def get_resource_usage(self) -> Dict[str, float]:
+        """Get current resource usage statistics"""
+        try:
+            if not self.process:
+                return {
+                    'browser_count': len(self.browser_pool),
+                    'total_contexts': sum(len(contexts) for contexts in self.context_pool.values()),
+                    'checks_performed': self.checks_performed
+                }
+            
+            memory_info = self.process.memory_info()
+            cpu_percent = self.process.cpu_percent()
+            
+            return {
+                'memory_mb': memory_info.rss / 1024 / 1024,
+                'memory_growth_mb': (memory_info.rss / 1024 / 1024) - self.initial_memory,
+                'cpu_percent': cpu_percent,
+                'browser_count': len(self.browser_pool),
+                'total_contexts': sum(len(contexts) for contexts in self.context_pool.values()),
+                'checks_performed': self.checks_performed
+            }
+        except Exception as e:
+            logger.warning(f"⚠️ Error getting resource usage: {e}")
+            return {
+                'browser_count': len(self.browser_pool),
+                'total_contexts': sum(len(contexts) for contexts in self.context_pool.values()),
+                'checks_performed': self.checks_performed
+            }
+    
+    def should_force_cleanup(self) -> bool:
+        """Determine if we should force cleanup based on resource usage"""
+        try:
+            time_since_cleanup = time.time() - self.last_cleanup_time
+            
+            # Always check time-based cleanup
+            if (time_since_cleanup > 60 or  # Force cleanup every minute
+                self.checks_performed % self.resource_check_interval == 0):
+                return True
+            
+            # Check memory-based cleanup if monitoring is enabled
+            if self.process:
+                current_memory = self.process.memory_info().rss / 1024 / 1024
+                return current_memory > self.memory_threshold_mb
+            
+            return False
+        except Exception:
+            return False
+    
+    async def cleanup_old_browsers(self):
+        """Clean up browsers that are too old"""
+        current_time = time.time()
+        browsers_to_remove = []
+        
+        for proxy_key, creation_time in self.browser_creation_times.items():
+            if current_time - creation_time > self.max_browser_age_seconds:
+                browsers_to_remove.append(proxy_key)
+        
+        for proxy_key in browsers_to_remove:
+            if proxy_key in self.browser_pool:
+                try:
+                    browser = self.browser_pool[proxy_key]
+                    await browser.close()
+                    del self.browser_pool[proxy_key]
+                    del self.browser_creation_times[proxy_key]
+                    
+                    # Also clean up associated contexts
+                    if proxy_key in self.context_pool:
+                        del self.context_pool[proxy_key]
+                    
+                    if DEBUG_ENHANCED_FEATURES:
+                        logger.info(f"🧹 Closed old browser: {proxy_key}")
+                except Exception as e:
+                    logger.warning(f"⚠️ Error closing old browser {proxy_key}: {e}")
+    
+    def get_next_user_agent(self) -> str:
+        """Get next user agent string, rotating between Android and iPhone mobiles"""
+        # Use centralized user agent manager with alternating preference
+        prefer_android = self._ua_toggle
+        self._ua_toggle = not self._ua_toggle
+        
+        return self.user_agent_manager.get_mobile_user_agent(prefer_android=prefer_android)
+    
+    def get_proxy_for_check(self) -> Optional[str]:
+        """Get proxy for account check with optimized single proxy handling"""
+        if not self.proxies:
+            return None
+        
+        if self.single_proxy_mode:
+            return self.proxies[0]
+        else:
+            proxy = self.proxies[self.current_proxy_index]
+            self.current_proxy_index = (self.current_proxy_index + 1) % len(self.proxies)
+            return proxy
+    
+    def parse_proxy_for_playwright(self, proxy_line: str) -> Optional[Dict[str, str]]:
+        """Parse proxy string into Playwright proxy format"""
+        if not proxy_line:
+            return None
+        
+        try:
+            if '://' not in proxy_line:
+                proxy_line = f"http://{proxy_line}"
+            
+            parsed = urlparse(proxy_line)
+            scheme = parsed.scheme.lower()
+            
+            # Handle SOCKS5 with authentication issue
+            if scheme == 'socks5' and parsed.username and parsed.password:
+                logger.info(f"⚠️ SOCKS5 with auth not supported by Chromium, converting to HTTP")
+                scheme = "http"
+            elif scheme not in ['http', 'https', 'socks5']:
+                logger.info(f"⚠️ Unsupported proxy scheme '{scheme}', defaulting to http")
+                scheme = "http"
+            
+            proxy_dict = {
+                "server": f"{scheme}://{parsed.hostname}:{parsed.port}"
+            }
+            
+            if parsed.username and parsed.password:
+                if scheme in ['http', 'https']:
+                    proxy_dict["username"] = parsed.username
+                    proxy_dict["password"] = parsed.password
+                elif scheme == 'socks5':
+                    logger.info(f"⚠️ SOCKS5 authentication not supported, proxy may not work")
+            
+            logger.info(f"🔧 Parsed proxy: {scheme}://{parsed.hostname}:{parsed.port} (auth: {'yes' if parsed.username and scheme != 'socks5' else 'no'})")
+            return proxy_dict
+            
+        except Exception as e:
+            logger.info(f"❌ Error parsing proxy {proxy_line}: {e}")
+            return None
+    
+    async def get_or_launch_browser(self, proxy_line: Optional[str]) -> Any:
+        """Get or launch browser with enhanced capabilities"""
+        proxy_key = f"{proxy_line or '__noproxy__'}_{PREFERRED_BROWSER_TYPE}"
+        
+        if proxy_key in self.browser_pool:
+            return self.browser_pool[proxy_key]
+        
+        proxy_dict = None
+        if proxy_line:
+            proxy_dict = self.parse_proxy_for_playwright(proxy_line)
+        
+        # Cloudflare-friendly browser launch arguments
+        # Removed args that interfere with JavaScript/WebGL/Canvas execution
+        browser_args = [
+            "--disable-blink-features=AutomationControlled",
+            "--disable-default-apps",
+            "--disable-extensions",
+            "--disable-component-extensions-with-background-pages",
+            "--disable-background-timer-throttling",
+            "--disable-backgrounding-occluded-windows",
+            "--disable-renderer-backgrounding",
+            "--disable-field-trial-config",
+            "--disable-back-forward-cache",
+            "--disable-background-networking",
+            "--enable-features=NetworkService,NetworkServiceInProcess",
+            "--disable-background-media-suspend",
+            "--disable-translate",
+            "--disable-ipc-flooding-protection",
+            "--no-default-browser-check",
+            "--no-first-run",
+            "--no-pings",
+            "--no-service-autorun",
+            "--disable-hang-monitor",
+            "--disable-prompt-on-repost",
+            "--disable-client-side-phishing-detection",
+            "--disable-component-update",
+            "--disable-domain-reliability",
+            "--disable-sync",
+            "--allow-running-insecure-content",
+            "--autoplay-policy=no-user-gesture-required",
+            "--disable-dev-shm-usage",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            # Enable JavaScript execution and WebGL for Cloudflare challenges
+            "--enable-javascript",
+            "--enable-webgl",
+            "--enable-accelerated-2d-canvas",
+            "--enable-gpu-rasterization",
+            # Keep essential security features while allowing challenge execution
+            "--disable-features=VizDisplayCompositor,TranslateUI"
+        ]
+        
+        # Launch browser based on preference
+        if PREFERRED_BROWSER_TYPE == "camoufox" and CAMOUFOX_AVAILABLE:
+            try:
+                camoufox_browser = AsyncCamoufox(
+                    headless=HEADLESS,
+                    addons=[],
+                    os="windows",
+                    screen="1920x1080",
+                    humanize=True
+                )
+                browser = await camoufox_browser.start()
+                
+                if DEBUG_ENHANCED_FEATURES:
+                    logger.info(f"🦊 Launched Camoufox browser with proxy: {proxy_line or 'None'}")
+                
+            except Exception as e:
+                logger.info(f"❌ Failed to launch Camoufox: {e}, falling back to Chromium")
+                browser = await self.playwright.chromium.launch(
+                    headless=HEADLESS,
+                    proxy=proxy_dict,
+                    args=browser_args,
+                    slow_mo=BROWSER_SLOWMO
+                )
+        else:
+            browser = await self.playwright.chromium.launch(
+                headless=HEADLESS,
+                proxy=proxy_dict,
+                args=browser_args,
+                slow_mo=BROWSER_SLOWMO
+            )
+            
+            if DEBUG_ENHANCED_FEATURES:
+                logger.info(f"🌐 Launched Chromium browser with proxy: {proxy_line or 'None'}")
+        
+        self.browser_pool[proxy_key] = browser
+        self.browser_creation_times[proxy_key] = time.time()
+        return browser
+    
+    async def new_context(self, browser: Any, user_agent: str = None) -> Any:
+        """Create new browser context with stealth settings"""
+        if user_agent is None:
+            user_agent = self.get_next_user_agent()
+        
+        # Use mobile viewports for better stealth (iPhone/Android sizes)
+        mobile_viewports = [
+            {"width": 375, "height": 812},  # iPhone X/11/12/13
+            {"width": 414, "height": 896},  # iPhone 11 Pro Max/12 Pro Max
+            {"width": 390, "height": 844},  # iPhone 12/13 mini
+            {"width": 360, "height": 640},  # Android (Galaxy S8/S9)
+            {"width": 412, "height": 869},  # Android (Pixel 3/4)
+            {"width": 393, "height": 851},  # Android (Pixel 5)
+        ]
+        viewport = random.choice(mobile_viewports)
+        
+        context = await browser.new_context(
+            user_agent=user_agent,
+            viewport=viewport,
+            locale="en-US",
+            timezone_id="America/New_York",
+            permissions=["geolocation", "notifications"],
+            java_script_enabled=True,  # Explicitly enable JavaScript
+            extra_http_headers={
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Accept-Encoding": "gzip, deflate, br",
+                "DNT": "1",
+                "Connection": "keep-alive",
+                "Upgrade-Insecure-Requests": "1",
+            }
+        )
+        
+        # Enhanced stealth JavaScript
+        await context.add_init_script("""
+            Object.defineProperty(navigator, 'webdriver', {
+                get: () => undefined,
+            });
+            
+            Object.defineProperty(navigator, 'plugins', {
+                get: () => [1, 2, 3, 4, 5],
+            });
+            
+            Object.defineProperty(navigator, 'languages', {
+                get: () => ['en-US', 'en'],
+            });
+            
+            const originalQuery = window.navigator.permissions.query;
+            return window.navigator.permissions.query = (parameters) => (
+                parameters.name === 'notifications' ?
+                    Promise.resolve({ state: Notification.permission }) :
+                    originalQuery(parameters)
+            );
+            
+            Object.defineProperty(navigator, 'serviceWorker', {
+                get: () => ({
+                    register: () => Promise.resolve(),
+                    getRegistrations: () => Promise.resolve([]),
+                    ready: Promise.resolve({
+                        unregister: () => Promise.resolve(true),
+                        update: () => Promise.resolve(),
+                        pushManager: {
+                            subscribe: () => Promise.resolve(),
+                            getSubscription: () => Promise.resolve(null)
+                        },
+                        sync: {
+                            register: () => Promise.resolve()
+                        },
+                        active: {
+                            postMessage: () => {},
+                            terminate: () => {}
+                        },
+                        installing: null,
+                        waiting: null,
+                        onupdatefound: null,
+                        oncontrollerchange: null,
+                        onmessage: null
+                    }),
+                    controller: null,
+                    oncontrollerchange: null,
+                    onmessage: null
+                })
+            });
+        """)
+        
+        # Block unnecessary resources for performance
+        if BLOCK_RESOURCE_TYPES:
+            await context.route("**/*", lambda route: (
+                route.abort() if route.request.resource_type in ["image", "media", "font", "stylesheet"] 
+                else route.continue_()
+            ))
+        
+        return context
+    
+    async def get_optimized_context(self, browser: Any, proxy_key: str, user_agent: str = None) -> Any:
+        """Get a completely fresh browser context for maximum isolation"""
+        if self.context_reuse_count <= 1:
+            context = await self.new_context(browser, user_agent=user_agent)
+            if DEBUG_ENHANCED_FEATURES:
+                logger.info(f"🆕 Created fresh isolated context for {proxy_key}")
+            return context
+        
+        # Legacy reuse logic (only if CONTEXT_REUSE_COUNT > 1)
+        if proxy_key not in self.context_pool:
+            self.context_pool[proxy_key] = []
+        
+        contexts = self.context_pool[proxy_key]
+        for i, context in enumerate(contexts):
+            context_key = f"{proxy_key}_{i}"
+            usage_count = self.context_usage_counter.get(context_key, 0)
+            
+            if usage_count < self.context_reuse_count:
+                await self.clear_context_session(context)
+                self.context_usage_counter[context_key] = usage_count + 1
+                if DEBUG_ENHANCED_FEATURES:
+                    logger.info(f"🔄 Reusing context {context_key} (usage: {usage_count + 1}/{self.context_reuse_count}) - Session cleared")
+                return context
+        
+        if len(contexts) < self.max_contexts_per_browser:
+            context = await self.new_context(browser, user_agent=user_agent)
+            contexts.append(context)
+            context_key = f"{proxy_key}_{len(contexts) - 1}"
+            self.context_usage_counter[context_key] = 1
+            
+            if DEBUG_ENHANCED_FEATURES:
+                logger.info(f"🆕 Created new context {context_key}")
+            return context
+        
+        # Replace oldest context if at max capacity
+        old_context = contexts[0]
+        try:
+            await old_context.close()
+        except:
+            pass
+        
+        new_context = await self.new_context(browser, user_agent=user_agent)
+        contexts[0] = new_context
+        context_key = f"{proxy_key}_0"
+        self.context_usage_counter[context_key] = 1
+        
+        if DEBUG_ENHANCED_FEATURES:
+            logger.info(f"🔄 Replaced oldest context {context_key}")
+        return new_context
+    
+    async def clear_context_session(self, context: Any):
+        """Clear all session data from context to ensure clean state"""
+        try:
+            await context.clear_cookies()
+            
+            for page in context.pages:
+                try:
+                    await page.evaluate("() => { localStorage.clear(); }")
+                    await page.evaluate("() => { sessionStorage.clear(); }")
+                    await page.evaluate("() => { if (window.caches) { caches.keys().then(names => names.forEach(name => caches.delete(name))); } }")
+                except:
+                    pass
+            
+            if DEBUG_ENHANCED_FEATURES:
+                logger.info("🧹 Context session cleared - cookies, localStorage, sessionStorage")
+                
+        except Exception as e:
+            if DEBUG_ENHANCED_FEATURES:
+                logger.info(f"⚠️ Error clearing context session: {e}")
+            pass
+    
+    async def cleanup_old_contexts(self, force: bool = False):
+        """Enhanced cleanup with resource monitoring and leak prevention"""
+        should_cleanup = (force or 
+                         self.checks_performed % self.cleanup_interval == 0 or 
+                         self.should_force_cleanup())
+        
+        if not should_cleanup:
+            return
+        
+        # Get resource usage before cleanup
+        resources_before = self.get_resource_usage()
+        
+        if DEBUG_ENHANCED_FEATURES or resources_before.get('memory_mb', 0) > 500:
+            logger.info(f"🧹 Performing enhanced cleanup (checks: {self.checks_performed})")
+            logger.info(f"   Memory: {resources_before.get('memory_mb', 0):.1f}MB "
+                       f"(+{resources_before.get('memory_growth_mb', 0):.1f}MB)")
+            logger.info(f"   Browsers: {resources_before.get('browser_count', 0)}, "
+                       f"Contexts: {resources_before.get('total_contexts', 0)}")
+        
+        contexts_cleaned = 0
+        browsers_cleaned = 0
+        
+        # Clean up old browsers first
+        await self.cleanup_old_browsers()
+        
+        # Clean up contexts more aggressively if memory is high
+        memory_pressure = resources_before.get('memory_mb', 0) > self.memory_threshold_mb
+        
+        for proxy_key, contexts in list(self.context_pool.items()):
+            if memory_pressure:
+                # Under memory pressure, close all contexts
+                for context in contexts:
+                    try:
+                        await context.close()
+                        contexts_cleaned += 1
+                    except:
+                        pass
+                self.context_pool[proxy_key] = []
+            elif len(contexts) > self.max_contexts_per_browser:
+                # Normal cleanup - keep only the newest contexts
+                old_contexts = contexts[:-self.max_contexts_per_browser]
+                self.context_pool[proxy_key] = contexts[-self.max_contexts_per_browser:]
+                
+                for context in old_contexts:
+                    try:
+                        await context.close()
+                        contexts_cleaned += 1
+                    except:
+                        pass
+        
+        # Clean up usage counters for removed contexts
+        valid_keys = set()
+        for pk in self.context_pool.keys():
+            for i in range(len(self.context_pool[pk])):
+                valid_keys.add(f"{pk}_{i}")
+        
+        for key in list(self.context_usage_counter.keys()):
+            if key not in valid_keys:
+                del self.context_usage_counter[key]
+        
+        # Force garbage collection if under memory pressure
+        if memory_pressure:
+            gc.collect()
+            logger.info("🧹 Forced garbage collection due to memory pressure")
+        
+        # Update cleanup time
+        self.last_cleanup_time = time.time()
+        
+        # Log cleanup results
+        if contexts_cleaned > 0 or browsers_cleaned > 0 or DEBUG_ENHANCED_FEATURES:
+            resources_after = self.get_resource_usage()
+            memory_freed = resources_before.get('memory_mb', 0) - resources_after.get('memory_mb', 0)
+            
+            logger.info(f"🧹 Cleanup complete: {contexts_cleaned} contexts, {browsers_cleaned} browsers")
+            if memory_freed > 0:
+                logger.info(f"   Memory freed: {memory_freed:.1f}MB")
+            logger.info(f"   Current memory: {resources_after.get('memory_mb', 0):.1f}MB")
