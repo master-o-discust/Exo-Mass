@@ -159,55 +159,49 @@ class SolverManager:
             logger.error(f"❌ BotsForge solver initialization error: {error_msg}")
     
     async def _initialize_drission_bypasser(self):
-        """Initialize the DrissionPage CloudFlare bypasser"""
+        """Initialize the Patchright + Camoufox CloudFlare bypasser (replacing DrissionPage)"""
         try:
-            from DrissionPage import ChromiumPage, ChromiumOptions
-            from solvers.cloudflare_bypass import CloudflareBypasser
+            from patchright.async_api import async_playwright as patchright_async
+            from camoufox.async_api import AsyncCamoufox
             
-            # Test initialization with minimal options
-            test_options = ChromiumOptions().auto_port()
-            test_options.headless(True)
-            test_options.set_argument("--no-sandbox")
-            test_options.set_argument("--disable-gpu")
-            
-            # Don't actually create a page, just test imports and options
+            # Test that both Patchright and Camoufox are available
+            # Don't actually create instances, just test imports
             
             # Store solver components for later use
             self.solvers['drission_bypass'] = {
-                'page_class': ChromiumPage,
-                'options_class': ChromiumOptions,
-                'bypasser_class': CloudflareBypasser,
+                'patchright_async': patchright_async,
+                'camoufox_class': AsyncCamoufox,
                 'initialized': True
             }
             
             self.solver_status['drission_bypass'] = SolverStatus(
-                name="DrissionPage Bypasser (Fallback 2)",
+                name="Patchright + Camoufox Bypasser (Fallback 2)",
                 available=True,
                 initialized=True,
                 version="1.0"
             )
             
-            logger.info("✅ DrissionPage CloudFlare bypasser initialized successfully")
+            logger.info("✅ Patchright + Camoufox CloudFlare bypasser initialized successfully")
             
         except ImportError as e:
             error_msg = f"Import failed: {e}"
             self.solver_status['drission_bypass'] = SolverStatus(
-                name="DrissionPage Bypasser (Fallback 2)",
+                name="Patchright + Camoufox Bypasser (Fallback 2)",
                 available=False,
                 initialized=False,
                 error=error_msg
             )
-            logger.warning(f"⚠️ DrissionPage bypasser not available: {error_msg}")
+            logger.warning(f"⚠️ Patchright + Camoufox bypasser not available: {error_msg}")
             
         except Exception as e:
             error_msg = f"Initialization failed: {e}"
             self.solver_status['drission_bypass'] = SolverStatus(
-                name="DrissionPage Bypasser (Fallback 2)",
+                name="Patchright + Camoufox Bypasser (Fallback 2)",
                 available=False,
                 initialized=False,
                 error=error_msg
             )
-            logger.error(f"❌ DrissionPage bypasser initialization error: {error_msg}")
+            logger.error(f"❌ Patchright + Camoufox bypasser initialization error: {error_msg}")
     
     def get_solver_status(self) -> Dict[str, SolverStatus]:
         """Get the status of all solvers"""
