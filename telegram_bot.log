@@ -1,0 +1,315 @@
+2025-08-19 00:04:18.047 | INFO     | utils.api_key_manager:get_or_create_api_key:58 - ✅ Using API key from environment: kQXw0j_U...
+2025-08-19 00:04:18,661 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-08-19 00:04:18,661 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-08-19 00:04:18,662 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-08-19 00:04:18,662 - __main__ - INFO - 🔄 Dropbox token refresh scheduled every 3 hours
+2025-08-19 00:04:18,662 - __main__ - INFO - 🤖 Starting Exo Mass Checker Bot with Enhanced Turnstile Bypass...
+2025-08-19 00:04:18,662 - __main__ - INFO - 🔧 Enhanced Browser: True (camoufox)
+2025-08-19 00:04:18,662 - __main__ - INFO - 🛡️ Turnstile Service: False
+2025-08-19 00:04:18,662 - __main__ - INFO - 🔧 BotsForge Service: True
+2025-08-19 00:04:18,662 - __main__ - INFO - 🌐 BotsForge API: http://127.0.0.1:5033
+2025-08-19 00:04:19,010 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getMe "HTTP/1.1 200 OK"
+2025-08-19 00:04:19,124 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/deleteWebhook "HTTP/1.1 200 OK"
+2025-08-19 00:04:19,125 - apscheduler.scheduler - INFO - Added job "<lambda>" to job store "default"
+2025-08-19 00:04:19,125 - apscheduler.scheduler - INFO - Added job "<lambda>" to job store "default"
+2025-08-19 00:04:19,125 - apscheduler.scheduler - INFO - Added job "dropbox_token_refresh" to job store "default"
+2025-08-19 00:04:19,125 - apscheduler.scheduler - INFO - Scheduler started
+2025-08-19 00:04:19,125 - telegram.ext.Application - INFO - Application started
+2025-08-19 00:04:19,661 - apscheduler.scheduler - INFO - Removed job b02a4ce0b963415a947fd66b8c5cb202
+2025-08-19 00:04:19,661 - apscheduler.executors.default - INFO - Running job "<lambda> (trigger: date[2025-08-19 00:04:19 UTC], next run at: 2025-08-19 00:04:19 UTC)" (scheduled at 2025-08-19 00:04:19.660522+00:00)
+2025-08-19 00:04:19,661 - __main__ - INFO - 🚀 Initializing Mass-checker systems...
+2025-08-19 00:04:19,662 - utils.dropbox_uploader - INFO - Refreshing Dropbox access token...
+2025-08-19 00:04:19,663 - utils.resource_monitor - INFO - 🔍 Starting resource monitoring
+2025-08-19 00:04:20,664 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 133.6MB (+0.0MB), CPU: 0.0%
+2025-08-19 00:04:20,664 - apscheduler.scheduler - INFO - Removed job 91d8ba4b038843f5ab83f304fcdf72dd
+2025-08-19 00:04:20,664 - apscheduler.executors.default - INFO - Running job "<lambda> (trigger: date[2025-08-19 00:04:20 UTC], next run at: 2025-08-19 00:04:20 UTC)" (scheduled at 2025-08-19 00:04:20.661457+00:00)
+2025-08-19 00:04:20,812 - utils.dropbox_uploader - INFO - Dropbox access token refreshed successfully (expires in 4.0 hours)
+2025-08-19 00:04:20,892 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/setMyCommands "HTTP/1.1 200 OK"
+2025-08-19 00:04:20,892 - __main__ - INFO - Bot commands set up successfully!
+2025-08-19 00:04:20,892 - apscheduler.executors.default - INFO - Job "<lambda> (trigger: date[2025-08-19 00:04:20 UTC], next run at: 2025-08-19 00:04:20 UTC)" executed successfully
+2025-08-19 00:04:23,635 - __main__ - INFO - ✅ Dropbox access token initialized and base folders verified
+2025-08-19 00:04:23,635 - utils.solver_manager - INFO - 🚀 Initializing all Turnstile/Cloudflare solvers...
+2025-08-19 00:04:23,723 - utils.solver_manager - INFO - ✅ Turnstile Solver initialized successfully
+2025-08-19 00:04:23,810 - utils.display_detector - INFO - [00:04:23] [[34mINFO[0m] -> 🖥️ No DISPLAY environment variable found
+2025-08-19 00:04:23,810 - utils.display_detector - INFO - [00:04:23] [[34mINFO[0m] -> 🖥️ Detected headless environment
+2025-08-19 00:04:23,810 - utils.display_detector - INFO - [00:04:23] [[34mINFO[0m] -> 🖥️ Browser config: headless=True, display=False, pyautogui=False
+2025-08-19 00:04:23.810 | INFO     | solvers.cloudflare_botsforge.browser:<module>:40 - ℹ️ PyAutoGUI disabled - running in headless mode
+2025-08-19 00:04:23,816 - utils.solver_manager - INFO - ✅ BotsForge CloudFlare solver initialized successfully
+2025-08-19 00:04:23,816 - utils.solver_manager - INFO - ✅ Patchright + Camoufox CloudFlare bypasser initialized successfully
+2025-08-19 00:04:23,816 - utils.solver_manager - INFO - ✅ Solver initialization complete: 3/3 solvers available
+2025-08-19 00:04:23,816 - utils.solver_manager - INFO -    ✅ turnstile_solver: Ready
+2025-08-19 00:04:23,816 - utils.solver_manager - INFO -    ✅ botsforge: Ready
+2025-08-19 00:04:23,816 - utils.solver_manager - INFO -    ✅ drission_bypass: Ready
+2025-08-19 00:04:23,816 - utils.solver_manager - INFO - ℹ️ Turnstile service disabled in config
+2025-08-19 00:04:23,816 - utils.solver_manager - INFO - 🚀 Starting BotsForge API service
+2025-08-19 00:04:23,816 - utils.solver_manager - INFO -    Host: 127.0.0.1:5033
+2025-08-19 00:04:26,821 - utils.solver_manager - ERROR - ❌ BotsForge service failed to start (exit code: 0)
+2025-08-19 00:04:26,821 - utils.solver_manager - ERROR -    Error: 2025-08-19 00:04:23.905 | INFO     | utils.api_key_manager:get_or_create_api_key:58 - ✅ Using API key from environment: kQXw0j_U...
+2025-08-19 00:04:24.642 | INFO     | solvers.cloudflare_botsforge.browser:<module>:40 - ℹ️ PyAutoGUI disabled - running in headless mode
+2025-08-19 00:04:24.651 | INFO     | utils.api_key_manager:get_or_create_api_key:58 - ✅ Using API key from environment: kQXw0j_U...
+2025-08-19 00:04:24.651 | INFO     | utils.api_key_manager:get_or_create_api_key:58 - ✅ Using API key from environment: kQXw0j_U...
+2025-08-19 00:04:24.651 | INFO     | utils.api_key_manager:sync_api_key_to_file:84 - ✅ Synced API key to /workspace/project/Exo-Mass/solvers/cloudflare_botsforge/.api_key: kQXw0j_U...
+2025-08-19 00:04:24.651 | INFO     | __main__:<module>:184 - 🚀 BotsForge server starting with API key: kQXw0j_U...
+2025-08-19 00:04:24.651 | INFO     | __main__:install_driver:41 - check and installing webdriver...
+2025-08-19 00:04:24.651 | INFO     | __main__:install_driver:43 - check completed
+2025-08-19 00:04:24.733 | ERROR    | __main__:<module>:194 - [Errno 98] Address already in use
+Traceback (most recent call last):
+
+> File "/workspace/project/Exo-Mass/launch_botsforge.py", line 192, in <module>
+    asyncio.run(start())
+    │       │   └ <function start at 0x7549fff7a2a0>
+    │       └ <function run at 0x754a1cfd8680>
+    └ <module 'asyncio' from '/openhands/micromamba/envs/openhands/lib/python3.12/asyncio/__init__.py'>
+
+  File "/openhands/micromamba/envs/openhands/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           │      │   └ <coroutine object start at 0x754a0c0e7400>
+           │      └ <function Runner.run at 0x754a1c20db20>
+           └ <asyncio.runners.Runner object at 0x7549fff769c0>
+  File "/openhands/micromamba/envs/openhands/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           │    │                        └ <Task finished name='Task-1' coro=<start() done, defined at /workspace/project/Exo-Mass/launch_botsforge.py:45> exception=OSE...
+           │    └ None
+           └ <asyncio.runners.Runner object at 0x7549fff769c0>
+  File "/openhands/micromamba/envs/openhands/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           │      └ <method 'result' of '_asyncio.Task' objects>
+           └ <Task finished name='Task-1' coro=<start() done, defined at /workspace/project/Exo-Mass/launch_botsforge.py:45> exception=OSE...
+
+  File "/workspace/project/Exo-Mass/launch_botsforge.py", line 175, in start
+    await hypercorn.asyncio.serve(app, config)
+          │         │       │     │    └ <hypercorn.config.Config object at 0x7549fff77650>
+          │         │       │     └ <Quart 'launch_botsforge'>
+          │         │       └ <function serve at 0x7549ff9fc680>
+          │         └ <module 'hypercorn.asyncio' from '/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/hypercorn/async...
+          └ <module 'hypercorn' from '/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/hypercorn/__init__.py'>
+
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/hypercorn/asyncio/__init__.py", line 44, in serve
+    await worker_serve(
+          └ <function worker_serve at 0x7549ff7758a0>
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/hypercorn/asyncio/run.py", line 91, in worker_serve
+    sockets = config.create_sockets()
+              │      └ <function Config.create_sockets at 0x7549ff891300>
+              └ <hypercorn.config.Config object at 0x7549fff77650>
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/hypercorn/config.py", line 206, in create_sockets
+    insecure_sockets = self._create_sockets(self.bind)
+                       │    │               │    └ <property object at 0x7549ff885da0>
+                       │    │               └ <hypercorn.config.Config object at 0x7549fff77650>
+                       │    └ <function Config._create_sockets at 0x7549ff891440>
+                       └ <hypercorn.config.Config object at 0x7549fff77650>
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/hypercorn/config.py", line 273, in _create_sockets
+    sock.bind(binding)
+    │    │    └ ('127.0.0.1', 5033)
+    │    └ <method 'bind' of '_socket.socket' objects>
+    └ <socket.socket fd=6, family=2, type=1, proto=0, laddr=('0.0.0.0', 0)>
+
+OSError: [Errno 98] Address already in use
+
+2025-08-19 00:04:26,821 - __main__ - INFO - ✅ All systems initialized successfully!
+2025-08-19 00:04:26,821 - apscheduler.executors.default - INFO - Job "<lambda> (trigger: date[2025-08-19 00:04:19 UTC], next run at: 2025-08-19 00:04:19 UTC)" executed successfully
+2025-08-19 00:04:29,479 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:04:39,598 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:04:49,714 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:04:51,667 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 172.1MB (+38.5MB), CPU: 0.8%
+2025-08-19 00:04:54,163 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:04:54,634 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/answerCallbackQuery "HTTP/1.1 200 OK"
+2025-08-19 00:04:54,871 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/editMessageText "HTTP/1.1 200 OK"
+2025-08-19 00:04:55,758 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:04:55,986 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/answerCallbackQuery "HTTP/1.1 200 OK"
+2025-08-19 00:04:56,238 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/editMessageText "HTTP/1.1 200 OK"
+2025-08-19 00:05:00,250 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:05:00,365 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getFile "HTTP/1.1 200 OK"
+2025-08-19 00:05:00,479 - httpx - INFO - HTTP Request: GET https://api.telegram.org/file/bot8243582019%3AAAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/documents/file_0.txt "HTTP/1.1 200 OK"
+2025-08-19 00:05:01,472 - utils.dropbox_uploader - INFO - Dropbox folder created: /ExoMassChecker/user_uploads/8487454378/2025-08-19
+2025-08-19 00:05:01,883 - utils.dropbox_uploader - INFO - Dropbox folder created: /ExoMassChecker/user_uploads/8487454378/2025-08-19/uploads
+2025-08-19 00:05:02,624 - utils.dropbox_uploader - INFO - File uploaded to Dropbox: /ExoMassChecker/user_uploads/8487454378/2025-08-19/uploads/AM 2.txt
+2025-08-19 00:05:02,624 - handlers.file_handler - INFO - Detection results: 1 proxies, 0 accounts
+2025-08-19 00:05:02,865 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/sendMessage "HTTP/1.1 200 OK"
+2025-08-19 00:05:03,879 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:05:04,140 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/answerCallbackQuery "HTTP/1.1 200 OK"
+2025-08-19 00:05:04,418 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/editMessageText "HTTP/1.1 200 OK"
+2025-08-19 00:05:06,700 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:05:06,815 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getFile "HTTP/1.1 200 OK"
+2025-08-19 00:05:06,929 - httpx - INFO - HTTP Request: GET https://api.telegram.org/file/bot8243582019%3AAAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/documents/file_1.txt "HTTP/1.1 200 OK"
+2025-08-19 00:05:08,180 - utils.dropbox_uploader - INFO - Dropbox folder created: /ExoMassChecker/user_uploads/8487454378/2025-08-19/accounts
+2025-08-19 00:05:08,960 - utils.dropbox_uploader - INFO - File uploaded to Dropbox: /ExoMassChecker/user_uploads/8487454378/2025-08-19/accounts/726486011-107X-Epic-Games-Accounts.txt
+2025-08-19 00:05:08,960 - handlers.file_handler - INFO - Detection results: 0 proxies, 2 accounts
+2025-08-19 00:05:09,203 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/sendMessage "HTTP/1.1 200 OK"
+2025-08-19 00:05:10,432 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:05:10,659 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/answerCallbackQuery "HTTP/1.1 200 OK"
+2025-08-19 00:05:10,895 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/editMessageText "HTTP/1.1 200 OK"
+2025-08-19 00:05:10,943 - utils.browser_manager - INFO - 🚀 Initializing enhanced browser automation
+2025-08-19 00:05:11,212 - utils.browser_manager - INFO - ✅ Using Patchright for enhanced stealth
+2025-08-19 00:05:11,212 - utils.account_checker - INFO - 🚀 Starting batch check of 2 accounts...
+2025-08-19 00:05:11,212 - utils.account_checker - INFO - 🚀 omarabailisd35t@outlook.com - Starting account check...
+2025-08-19 00:05:11,221 - utils.browser_manager - INFO - 🔧 Parsed proxy: http://ca.proxy-jet.io:1010 (auth: yes)
+2025-08-19 00:05:11,221 - utils.account_checker - INFO - 🚀 exowinbot@icloud.com - Starting account check...
+2025-08-19 00:05:11,224 - utils.browser_manager - INFO - 🔧 Parsed proxy: http://ca.proxy-jet.io:1010 (auth: yes)
+2025-08-19 00:05:11,513 - utils.browser_manager - INFO - ❌ Failed to launch Camoufox: 'str' object has no attribute 'is_set', falling back to Chromium
+2025-08-19 00:05:11,528 - utils.browser_manager - INFO - ❌ Failed to launch Camoufox: 'str' object has no attribute 'is_set', falling back to Chromium
+2025-08-19 00:05:11,650 - utils.browser_manager - INFO - 🆕 Created fresh isolated context for 250712La4qP-resi-US:049NOA7a4VNHoIM@ca.proxy-jet.io:1010
+2025-08-19 00:05:11,651 - utils.browser_manager - INFO - 🆕 Created fresh isolated context for 250712La4qP-resi-US:049NOA7a4VNHoIM@ca.proxy-jet.io:1010
+2025-08-19 00:05:11,689 - utils.login_handler - INFO - 🔐 exowinbot@icloud.com - Starting login process...
+2025-08-19 00:05:11,690 - utils.login_handler - INFO - 🌐 exowinbot@icloud.com - Navigating to login page...
+2025-08-19 00:05:11,692 - utils.login_handler - INFO - 🔐 omarabailisd35t@outlook.com - Starting login process...
+2025-08-19 00:05:11,693 - utils.login_handler - INFO - 🌐 omarabailisd35t@outlook.com - Navigating to login page...
+2025-08-19 00:05:16,915 - utils.login_handler - INFO - 🛡️ omarabailisd35t@outlook.com - CloudFlare challenge detected (status: 403), attempting to solve...
+2025-08-19 00:05:18,929 - utils.unified_turnstile_handler - INFO - 🔍 Turnstile/Cloudflare challenge detected: Just a moment
+2025-08-19 00:05:19,759 - utils.dropbox_uploader - INFO - Dropbox folder created: /ExoMassChecker/screenshots/2025-08-19
+2025-08-19 00:05:20,449 - utils.login_handler - INFO - 🛡️ exowinbot@icloud.com - CloudFlare challenge detected (status: 403), attempting to solve...
+2025-08-19 00:05:20,551 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:05:20,647 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561918_challenge_detected_Just_a_moment.png
+2025-08-19 00:05:20,648 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561918_challenge_detected_Just_a_moment.png
+2025-08-19 00:05:20,664 - utils.unified_turnstile_handler - INFO - 🔄 No sitekey found, will use fallback methods
+2025-08-19 00:05:22,668 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 179.5MB (+45.9MB), CPU: 1.5%
+2025-08-19 00:05:22,669 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561920_no_sitekey_found.png
+2025-08-19 00:05:22,671 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561920_no_sitekey_found.png
+2025-08-19 00:05:22,681 - utils.unified_turnstile_handler - INFO - 🔍 Turnstile/Cloudflare challenge detected: Just a moment
+2025-08-19 00:05:24,094 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561922_turnstile_detected.png
+2025-08-19 00:05:24,094 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561922_turnstile_detected.png
+2025-08-19 00:05:24,094 - utils.unified_turnstile_handler - INFO - 🎯 Attempting to solve Turnstile/Cloudflare challenge...
+2025-08-19 00:05:24,094 - utils.unified_turnstile_handler - ERROR - ❌ Error solving Turnstile challenge: 'coroutine' object has no attribute 'get'
+2025-08-19 00:05:24,453 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561922_challenge_detected_Just_a_moment.png
+2025-08-19 00:05:24,454 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561922_challenge_detected_Just_a_moment.png
+2025-08-19 00:05:24,464 - utils.unified_turnstile_handler - INFO - 🔄 No sitekey found, will use fallback methods
+2025-08-19 00:05:25,602 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561924_turnstile_error.png
+2025-08-19 00:05:25,603 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561924_turnstile_error.png
+2025-08-19 00:05:25,844 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561924_no_sitekey_found.png
+2025-08-19 00:05:25,844 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561924_no_sitekey_found.png
+2025-08-19 00:05:27,110 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561925_turnstile_detected.png
+2025-08-19 00:05:27,110 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561925_turnstile_detected.png
+2025-08-19 00:05:27,110 - utils.unified_turnstile_handler - INFO - 🎯 Attempting to solve Turnstile/Cloudflare challenge...
+2025-08-19 00:05:27,110 - utils.unified_turnstile_handler - ERROR - ❌ Error solving Turnstile challenge: 'coroutine' object has no attribute 'get'
+2025-08-19 00:05:28,389 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561927_turnstile_error.png
+2025-08-19 00:05:28,389 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561927_turnstile_error.png
+2025-08-19 00:05:30,605 - utils.login_handler - INFO - ⏳ omarabailisd35t@outlook.com - Waiting for CloudFlare challenge completion...
+2025-08-19 00:05:30,666 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:05:31,611 - utils.login_handler - INFO - ✅ omarabailisd35t@outlook.com - Challenge completed, redirected to: https://www.epicgames.com/id/login
+2025-08-19 00:05:31,611 - utils.login_handler - INFO - 🔄 omarabailisd35t@outlook.com - Reloading page after challenge resolution...
+/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/patchright/_impl/_network.py:935: RuntimeWarning: coroutine 'UnifiedTurnstileHandler.solve_with_drission_bypass' was never awaited
+  self._headers_map[header["name"].lower()][header["value"]] = True
+RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+2025-08-19 00:05:33,390 - utils.login_handler - INFO - ⏳ exowinbot@icloud.com - Waiting for CloudFlare challenge completion...
+2025-08-19 00:05:34,396 - utils.login_handler - INFO - ✅ exowinbot@icloud.com - Challenge completed, redirected to: https://www.epicgames.com/id/login
+2025-08-19 00:05:34,397 - utils.login_handler - INFO - 🔄 exowinbot@icloud.com - Reloading page after challenge resolution...
+2025-08-19 00:05:34,907 - utils.login_handler - INFO - ❌ omarabailisd35t@outlook.com - Page still blocked after challenge resolution: 403
+2025-08-19 00:05:36,447 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561934_omarabailisd35t_at_outlook.com_navigate_error.png
+2025-08-19 00:05:36,447 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561934_omarabailisd35t_at_outlook.com_navigate_error.png
+2025-08-19 00:05:36,455 - utils.account_checker - INFO - ⏳ Single proxy delay: 7.6s
+2025-08-19 00:05:38,743 - utils.login_handler - INFO - ❌ exowinbot@icloud.com - Page still blocked after challenge resolution: 403
+2025-08-19 00:05:40,470 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561938_exowinbot_at_icloud.com_navigate_error.png
+2025-08-19 00:05:40,470 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755561938_exowinbot_at_icloud.com_navigate_error.png
+2025-08-19 00:05:40,477 - utils.account_checker - INFO - ⏳ Single proxy delay: 4.3s
+2025-08-19 00:05:40,783 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:05:44,016 - utils.account_checker - INFO - 📊 Progress: 1/2 - omarabailisd35t@outlook.com: error
+2025-08-19 00:05:44,775 - utils.account_checker - INFO - 📊 Progress: 2/2 - exowinbot@icloud.com: error
+2025-08-19 00:05:44,775 - utils.account_checker - INFO - ✅ Batch check completed!
+2025-08-19 00:05:44,775 - utils.account_checker - INFO - 📊 Results: Valid: 0, Invalid: 0, Captcha: 0, 2FA: 0, Error: 2
+2025-08-19 00:05:44,823 - handlers.callback_handler - INFO - ⚠️ NO authorization codes found in 0 successful accounts - no auth codes file generated for user 8487454378
+2025-08-19 00:05:45,871 - utils.dropbox_uploader - INFO - Dropbox folder created: /ExoMassChecker/results/8487454378/2025-08-19
+2025-08-19 00:05:46,687 - utils.dropbox_uploader - INFO - File uploaded to Dropbox: /ExoMassChecker/results/8487454378/2025-08-19/error_accounts.txt
+2025-08-19 00:05:47,178 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/editMessageText "HTTP/1.1 200 OK"
+2025-08-19 00:05:50,903 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:05:53,673 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.1MB (+47.5MB), CPU: 0.9%
+2025-08-19 00:06:01,018 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:06:11,136 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:06:21,254 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:06:24,676 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.1MB (+47.5MB), CPU: 0.0%
+2025-08-19 00:06:31,369 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:06:41,485 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:06:51,603 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:06:55,681 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.1MB (+47.5MB), CPU: 0.0%
+2025-08-19 00:07:01,721 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:07:11,838 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:07:21,953 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:07:26,686 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.1MB (+47.5MB), CPU: 0.0%
+2025-08-19 00:07:32,070 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:07:42,185 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:07:52,301 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:07:57,691 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.1MB (+47.5MB), CPU: 0.0%
+2025-08-19 00:08:02,419 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:08:12,537 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:08:22,654 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:08:28,697 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.1MB (+47.5MB), CPU: 0.0%
+2025-08-19 00:08:32,769 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:08:42,885 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:08:53,000 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:08:59,703 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.1MB (+47.5MB), CPU: 0.0%
+2025-08-19 00:09:03,116 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:09:13,233 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:09:23,348 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:09:30,711 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.1MB (+47.5MB), CPU: 0.0%
+2025-08-19 00:09:33,465 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:09:43,584 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:09:53,701 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:10:01,719 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.2MB (+47.6MB), CPU: 0.0%
+2025-08-19 00:10:03,817 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:10:13,932 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:10:24,048 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:10:32,728 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.2MB (+47.6MB), CPU: 0.0%
+2025-08-19 00:10:34,167 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:10:44,282 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:10:54,399 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:11:03,738 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.2MB (+47.6MB), CPU: 0.0%
+2025-08-19 00:11:04,515 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:11:14,630 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:11:24,748 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:11:34,746 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.2MB (+47.6MB), CPU: 0.0%
+2025-08-19 00:11:34,863 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:11:44,978 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:11:55,094 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:12:05,758 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.2MB (+47.6MB), CPU: 0.0%
+2025-08-19 00:12:05,759 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:12:15,876 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:12:25,990 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:12:36,769 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.2MB (+47.6MB), CPU: 0.0%
+2025-08-19 00:12:36,769 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:12:46,887 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:12:57,003 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:13:07,778 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.2MB (+47.6MB), CPU: 0.0%
+2025-08-19 00:13:07,779 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:13:17,894 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:13:28,010 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:13:38,784 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.2MB (+47.6MB), CPU: 0.1%
+2025-08-19 00:13:38,784 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:13:48,905 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:13:59,021 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:14:09,788 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.2MB (+47.6MB), CPU: 0.0%
+2025-08-19 00:14:09,788 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:14:19,905 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:14:30,022 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:14:40,798 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.2MB (+47.6MB), CPU: 0.0%
+2025-08-19 00:14:40,799 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:14:50,917 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:15:01,035 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:15:11,809 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.2MB (+47.6MB), CPU: 0.0%
+2025-08-19 00:15:11,810 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:15:21,952 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:15:32,068 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:15:42,819 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.2MB (+47.6MB), CPU: 0.0%
+2025-08-19 00:15:42,820 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:15:52,937 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:16:03,052 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:16:13,829 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.2MB (+47.6MB), CPU: 0.0%
+2025-08-19 00:16:13,830 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:16:23,945 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:16:34,065 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:16:44,839 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.2MB (+47.6MB), CPU: 0.0%
+2025-08-19 00:16:44,840 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:16:54,957 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:17:05,073 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:17:15,851 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.2MB (+47.6MB), CPU: 0.0%
+2025-08-19 00:17:15,851 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:17:25,969 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:17:36,087 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:17:46,859 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.2MB (+47.6MB), CPU: 0.0%
+2025-08-19 00:17:46,859 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:17:56,974 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:18:07,113 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:18:17,870 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.2MB (+47.6MB), CPU: 0.0%
+2025-08-19 00:18:17,871 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:18:27,985 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:18:38,102 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:18:48,882 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 181.2MB (+47.6MB), CPU: 0.0%
+2025-08-19 00:18:48,882 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 00:18:58,997 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAGSrRtyqhsldS3Ijj_UA1_0ai6ms9DAE8E/getUpdates "HTTP/1.1 200 OK"

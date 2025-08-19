@@ -57,6 +57,178 @@ from config.settings import (
 
 logger = logging.getLogger(__name__)
 
+async def detect_turnstile_challenge(page: Page, max_wait_time: int = 30) -> Dict[str, Any]:
+    """
+    Enhanced Turnstile challenge detection with proper waiting and sitekey extraction
+    Based on best practices from 2captcha and professional CAPTCHA solving tools
+    """
+    logger.info("🔍 Starting enhanced Turnstile challenge detection...")
+    
+    # Primary detection patterns (most reliable)
+    primary_patterns = [
+        # Cloudflare Turnstile (most common)
+        {'selector': 'div[data-sitekey]', 'type': 'Cloudflare Turnstile'},
+        {'selector': '#cf-turnstile', 'type': 'Cloudflare Turnstile'},
+        {'selector': '.cf-turnstile', 'type': 'Cloudflare Turnstile'},
+        {'selector': '[data-sitekey*="0x"]', 'type': 'Cloudflare Turnstile'},
+        
+        # Generic Turnstile patterns
+        {'selector': '.turnstile-wrapper', 'type': 'Turnstile Wrapper'},
+        {'selector': '[class*="turnstile"]', 'type': 'Generic Turnstile'},
+        {'selector': '[id*="turnstile"]', 'type': 'Generic Turnstile'},
+    ]
+    
+    # Extended patterns for deeper search
+    extended_patterns = [
+        {'selector': 'iframe[src*="challenges.cloudflare.com"]', 'type': 'Cloudflare Challenge'},
+        {'selector': 'iframe[src*="turnstile"]', 'type': 'Turnstile iframe'},
+        {'selector': '[data-cf-turnstile-sitekey]', 'type': 'CF Turnstile Alt'},
+        {'selector': '[data-turnstile-sitekey]', 'type': 'Turnstile Alt'},
+        {'selector': 'form [data-sitekey]', 'type': 'Form Turnstile'},
+        {'selector': '[class*="challenge"]', 'type': 'Challenge Element'},
+    ]
+    
+    start_time = time.time()
+    challenge_info = None
+    
+    # Phase 1: Quick initial check
+    if DEBUG_ENHANCED_FEATURES:
+        logger.info("🔍 Phase 1: Quick initial detection...")
+    
+    challenge_info = await _check_turnstile_patterns(page, primary_patterns)
+    if challenge_info:
+        logger.info(f"✅ Found Turnstile challenge immediately: {challenge_info['type']}")
+        return challenge_info
+    
+    # Phase 2: Wait for dynamic content with periodic checks
+    if DEBUG_ENHANCED_FEATURES:
+        logger.info("🔍 Phase 2: Waiting for dynamic Turnstile content...")
+    
+    check_interval = 2  # Check every 2 seconds
+    checks_performed = 0
+    
+    while time.time() - start_time < max_wait_time:
+        await asyncio.sleep(check_interval)
+        checks_performed += 1
+        
+        if DEBUG_ENHANCED_FEATURES and checks_performed % 3 == 0:  # Log every 6 seconds
+            elapsed = int(time.time() - start_time)
+            logger.info(f"🔄 Still searching for Turnstile... ({elapsed}s elapsed)")
+        
+        # Check primary patterns first
+        challenge_info = await _check_turnstile_patterns(page, primary_patterns)
+        if challenge_info:
+            logger.info(f"✅ Found Turnstile challenge after {int(time.time() - start_time)}s: {challenge_info['type']}")
+            return challenge_info
+        
+        # After 10 seconds, also check extended patterns
+        if time.time() - start_time > 10:
+            challenge_info = await _check_turnstile_patterns(page, extended_patterns)
+            if challenge_info:
+                logger.info(f"✅ Found Turnstile challenge (extended) after {int(time.time() - start_time)}s: {challenge_info['type']}")
+                return challenge_info
+    
+    # Phase 3: Final comprehensive check
+    if DEBUG_ENHANCED_FEATURES:
+        logger.info("🔍 Phase 3: Final comprehensive check...")
+    
+    all_patterns = primary_patterns + extended_patterns
+    challenge_info = await _check_turnstile_patterns(page, all_patterns)
+    
+    if challenge_info:
+        logger.info(f"✅ Found Turnstile challenge in final check: {challenge_info['type']}")
+        return challenge_info
+    
+    # Phase 4: Check for response inputs (indicates Turnstile was present)
+    try:
+        response_inputs = await page.query_selector_all('input[name*="turnstile"], input[name*="cf-turnstile-response"]')
+        if response_inputs:
+            logger.info("🎯 Found Turnstile response inputs - challenge may have been solved automatically")
+            return {
+                'detected': True,
+                'type': 'Turnstile Response Found',
+                'sitekey': None,
+                'url': page.url,
+                'selector': 'input[name*="turnstile"]',
+                'auto_solved': True
+            }
+    except Exception as e:
+        logger.debug(f"Error checking response inputs: {e}")
+    
+    logger.warning(f"❌ No Turnstile challenge detected after {max_wait_time}s search")
+    return {
+        'detected': False,
+        'type': 'No Challenge',
+        'sitekey': None,
+        'url': page.url,
+        'selector': None,
+        'auto_solved': False
+    }
+
+async def _check_turnstile_patterns(page: Page, patterns: List[Dict[str, str]]) -> Optional[Dict[str, Any]]:
+    """Check a list of Turnstile patterns and return the first match found"""
+    for pattern in patterns:
+        try:
+            elements = await page.query_selector_all(pattern['selector'])
+            for element in elements:
+                # Extract sitekey using multiple methods
+                sitekey = await _extract_sitekey(element)
+                
+                # Check if element is visible and has dimensions
+                is_visible = await element.is_visible()
+                bounding_box = None
+                try:
+                    bounding_box = await element.bounding_box()
+                except:
+                    pass
+                
+                # If we found a sitekey or the element is visible, it's likely a valid challenge
+                if sitekey or (is_visible and bounding_box and bounding_box['width'] > 0):
+                    element_id = await element.get_attribute('id')
+                    element_class = await element.get_attribute('class')
+                    
+                    if DEBUG_ENHANCED_FEATURES:
+                        logger.info(f"🎯 Detected: {pattern['type']} - sitekey: {sitekey}, visible: {is_visible}")
+                    
+                    return {
+                        'detected': True,
+                        'type': pattern['type'],
+                        'sitekey': sitekey,
+                        'url': page.url,
+                        'selector': pattern['selector'],
+                        'element_id': element_id,
+                        'element_class': element_class,
+                        'visible': is_visible,
+                        'auto_solved': False
+                    }
+                    
+        except Exception as e:
+            logger.debug(f"Error checking pattern {pattern['selector']}: {e}")
+    
+    return None
+
+async def _extract_sitekey(element) -> Optional[str]:
+    """Extract sitekey from element using multiple methods"""
+    # Primary sitekey attributes (in order of preference)
+    sitekey_attrs = [
+        'data-sitekey',
+        'data-cf-turnstile-sitekey', 
+        'data-turnstile-sitekey',
+        'data-captcha-sitekey',
+        'data-site-key',
+        'sitekey'
+    ]
+    
+    for attr in sitekey_attrs:
+        try:
+            sitekey = await element.get_attribute(attr)
+            if sitekey and len(sitekey) > 10:  # Valid sitekeys are longer than 10 chars
+                return sitekey
+        except:
+            continue
+    
+    return None
+
 
 class UnifiedTurnstileHandler:
     """Unified handler for all Turnstile/Cloudflare bypass methods"""
@@ -77,164 +249,12 @@ class UnifiedTurnstileHandler:
     
     async def detect_turnstile_challenge(self, page: Page) -> Dict[str, Any]:
         """
-        Enhanced detection for Turnstile/Cloudflare challenges
+        Enhanced detection for Turnstile/Cloudflare challenges with improved waiting and sitekey extraction
         Returns challenge info or None if no challenge detected
         """
         try:
-            # Wait a moment for page to load
-            await asyncio.sleep(2)
-            
-            # Check for multiple Cloudflare indicators (enhanced detection)
-            indicators = [
-                "Just a moment",
-                "Checking your browser",
-                "Please wait while we check your browser",
-                "Cloudflare",
-                "cf-turnstile",
-                "turnstile",
-                "challenge-form",
-                "ray id",
-                "enable javascript and cookies to continue",
-                "something went wrong",
-                "verifying you are human",
-                "browser verification",
-                "window._cf_chl_opt",
-                "challenge-platform",
-                "cdn-cgi/challenge-platform",
-                "orchestrate/chl_page",
-                "cf_chl_opt",
-                "cray:",
-                "czone:",
-                "ctype:",
-                "performance & security by cloudflare"
-            ]
-            
-            page_content = await page.content()
-            page_title = await page.title()
-            current_url = page.url
-            
-            # Check title and content for indicators
-            challenge_detected = False
-            detected_indicator = None
-            for indicator in indicators:
-                if indicator.lower() in page_title.lower() or indicator.lower() in page_content.lower():
-                    challenge_detected = True
-                    detected_indicator = indicator
-                    break
-            
-            # Also check URL patterns for CloudFlare error pages
-            if not challenge_detected:
-                url_indicators = ['/error?', '__cf_chl', 'cloudflare']
-                for url_indicator in url_indicators:
-                    if url_indicator in current_url.lower():
-                        challenge_detected = True
-                        detected_indicator = f"URL pattern: {url_indicator}"
-                        break
-            
-            if not challenge_detected:
-                return {"detected": False}
-            
-            if DEBUG_ENHANCED_FEATURES:
-                logger.info(f"🔍 Turnstile/Cloudflare challenge detected: {detected_indicator}")
-            
-            # Take a screenshot of the challenge page for debugging
-            try:
-                await self.take_screenshot_and_upload(page, f"challenge_detected_{detected_indicator.replace(' ', '_')}")
-            except Exception:
-                pass
-            
-            # Try multiple methods to find Turnstile sitekey
-            challenge_info = {
-                "detected": True,
-                "url": current_url,
-                "sitekey": None,
-                "action": None,
-                "cdata": None,
-                "method": "turnstile_solver",  # Default to primary method
-                "indicator": detected_indicator
-            }
-            
-            # Method 1: Look for Turnstile widget elements
-            turnstile_elements = await page.query_selector_all('[data-sitekey]')
-            if turnstile_elements:
-                element = turnstile_elements[0]
-                sitekey = await element.get_attribute('data-sitekey')
-                action = await element.get_attribute('data-action')
-                cdata = await element.get_attribute('data-cdata')
-                
-                challenge_info.update({
-                    "sitekey": sitekey,
-                    "action": action,
-                    "cdata": cdata
-                })
-                
-                if DEBUG_ENHANCED_FEATURES:
-                    logger.info(f"🎯 Found Turnstile widget with sitekey: {sitekey}")
-            
-            # Method 2: Look for cf-turnstile elements
-            if not challenge_info["sitekey"]:
-                cf_elements = await page.query_selector_all('.cf-turnstile')
-                for element in cf_elements:
-                    sitekey = await element.get_attribute('data-sitekey')
-                    if sitekey:
-                        challenge_info["sitekey"] = sitekey
-                        challenge_info["action"] = await element.get_attribute('data-action')
-                        challenge_info["cdata"] = await element.get_attribute('data-cdata')
-                        if DEBUG_ENHANCED_FEATURES:
-                            logger.info(f"🎯 Found cf-turnstile element with sitekey: {sitekey}")
-                        break
-            
-            # Method 3: Search page source for sitekey patterns
-            if not challenge_info["sitekey"]:
-                import re
-                # Look for sitekey in various JavaScript patterns
-                sitekey_patterns = [
-                    r'sitekey["\']?\s*[:=]\s*["\']([0-9a-fA-F_x]+)["\']',
-                    r'data-sitekey["\']?\s*[:=]\s*["\']([0-9a-fA-F_x]+)["\']',
-                    r'["\']sitekey["\']:\s*["\']([0-9a-fA-F_x]+)["\']',
-                    r'turnstile.*?["\']([0-9a-fA-F_x]{26,})["\']',
-                ]
-                
-                for pattern in sitekey_patterns:
-                    matches = re.findall(pattern, page_content, re.IGNORECASE)
-                    for match in matches:
-                        if match.startswith('0x') and len(match) >= 26:
-                            challenge_info["sitekey"] = match
-                            if DEBUG_ENHANCED_FEATURES:
-                                logger.info(f"🎯 Found sitekey in page source: {match}")
-                            break
-                    if challenge_info["sitekey"]:
-                        break
-            
-            # Method 4: Try to find known Epic Games sitekeys in page source
-            if not challenge_info["sitekey"]:
-                for sitekey in self.epic_sitekeys:
-                    if sitekey in page_content:
-                        challenge_info["sitekey"] = sitekey
-                        if DEBUG_ENHANCED_FEATURES:
-                            logger.info(f"🎯 Found Epic Games sitekey in page: {sitekey}")
-                        break
-                
-                # If no specific sitekey found, will try fallback methods
-                if not challenge_info["sitekey"]:
-                    if DEBUG_ENHANCED_FEATURES:
-                        logger.info("🔄 No sitekey found, will use fallback methods")
-                    # Take screenshot when no sitekey found
-                    try:
-                        await self.take_screenshot_and_upload(page, "no_sitekey_found")
-                    except Exception:
-                        pass
-                else:
-                    if DEBUG_ENHANCED_FEATURES:
-                        logger.info(f"✅ Sitekey detection complete: {challenge_info['sitekey']}")
-                    # Take screenshot when sitekey found
-                    try:
-                        await self.take_screenshot_and_upload(page, f"sitekey_found_{challenge_info['sitekey'][:10]}")
-                    except Exception:
-                        pass
-            
-            return challenge_info
-            
+            # Use the enhanced global detection function
+            return await detect_turnstile_challenge(page, max_wait_time=30)
         except Exception as e:
             logger.error(f"❌ Error detecting Turnstile challenge: {str(e)}")
             return {"detected": False, "error": str(e)}
@@ -486,63 +506,178 @@ class UnifiedTurnstileHandler:
             logger.error(f"❌ BotsForge solver HTTP API error: {str(e)}")
             return {"success": False, "error": str(e), "elapsed_time": elapsed_time}
     
-    def solve_with_drission_bypass(self, challenge_info: Dict[str, Any]) -> Dict[str, Any]:
-        """Method 3: Solve using DrissionPage CloudFlare bypasser"""
+    async def solve_with_drission_bypass(self, challenge_info: Dict[str, Any]) -> Dict[str, Any]:
+        """Method 3: Solve using CloudFlare bypasser (supports both DrissionPage and Patchright + Camoufox)"""
         if not self.solver_manager.is_solver_available('drission_bypass'):
-            return {"success": False, "error": "DrissionPage bypasser not available"}
+            return {"success": False, "error": "CloudFlare bypasser not available"}
         
         try:
             if DEBUG_ENHANCED_FEATURES:
-                logger.info("🔄 Attempting DrissionPage CloudFlare bypasser...")
+                logger.info("🔄 Attempting CloudFlare bypasser as fallback...")
             
-            # Setup ChromiumOptions with our settings (use manager-provided classes if needed)
-            components = self.solver_manager.get_solver_components('drission_bypass') if self.solver_manager.is_solver_available('drission_bypass') else None
-            OptionsClass = (ChromiumOptions or (components and components.get('options_class')))
-            PageClass = (ChromiumPage or (components and components.get('page_class')))
-            BypasserClass = (CloudflareBypasser or (components and components.get('bypasser_class')))
-            if not OptionsClass or not PageClass or not BypasserClass:
-                raise ImportError('Drission bypass components not available')
+            # Import the updated CloudflareBypasser
+            from solvers.cloudflare_bypass import CloudflareBypasser
+            
+            # Get solver components from solver manager
+            components = self.solver_manager.get_solver_components('drission_bypass')
+            if not components:
+                return {"success": False, "error": "CloudFlare bypasser components not available"}
+            
+            # Try Patchright + Camoufox first (preferred)
+            if components.get('camoufox_class') and components.get('patchright_async'):
+                return await self._use_patchright_camoufox_bypasser(challenge_info, components)
+            
+            # Fallback to DrissionPage if available
+            elif components.get('page_class') and components.get('options_class'):
+                return await self._use_drission_bypasser(challenge_info, components)
+            
+            else:
+                return {"success": False, "error": "No suitable bypasser components available"}
+                
+        except Exception as e:
+            logger.error(f"❌ CloudFlare bypasser error: {str(e)}")
+            return {"success": False, "error": str(e)}
+    
+    async def _use_patchright_camoufox_bypasser(self, challenge_info: Dict[str, Any], components: Dict) -> Dict[str, Any]:
+        """Use Patchright + Camoufox with CloudFlare bypasser"""
+        try:
+            from solvers.cloudflare_bypass import CloudflareBypasser
+            
+            AsyncCamoufox = components['camoufox_class']
+            
+            # Create Camoufox browser with stealth settings
+            camoufox = AsyncCamoufox(
+                headless=HEADLESS,
+                humanize=True,
+                geoip=True,
+                screen=True,
+                fonts=True,
+                addons=True,
+                safe_mode=False
+            )
+            
+            browser = await camoufox.launch()
+            context_options = {'viewport': {'width': 1920, 'height': 1080}}
+            
+            # Add proxy and user agent if available
+            if self.proxy:
+                if '@' in self.proxy:
+                    auth_part, host_part = self.proxy.split('@')
+                    if ':' in auth_part:
+                        username, password = auth_part.split(':', 1)
+                        context_options['proxy'] = {
+                            'server': f"http://{host_part}",
+                            'username': username,
+                            'password': password
+                        }
+                else:
+                    context_options['proxy'] = {'server': f"http://{self.proxy}"}
+            
+            if self.user_agent:
+                context_options['user_agent'] = self.user_agent
+            
+            context = await browser.new_context(**context_options)
+            page = await context.new_page()
+            
+            try:
+                # Navigate to challenge URL
+                await page.goto(challenge_info["url"], wait_until='domcontentloaded', timeout=30000)
+                
+                # Use CloudflareBypasser with Patchright page
+                bypasser = CloudflareBypasser(page, max_retries=3, log=DEBUG_ENHANCED_FEATURES)
+                success = await bypasser.bypass()
+                
+                if success:
+                    # Extract token and cookies
+                    token = None
+                    try:
+                        turnstile_inputs = await page.query_selector_all('input[name*="turnstile"], input[name*="cf-turnstile"]')
+                        for input_elem in turnstile_inputs:
+                            token_value = await input_elem.get_attribute('value')
+                            if token_value and len(token_value) > 10:
+                                token = token_value
+                                break
+                    except:
+                        pass
+                    
+                    cookies = {}
+                    try:
+                        cookie_list = await context.cookies()
+                        cookies = {cookie['name']: cookie['value'] for cookie in cookie_list}
+                    except:
+                        pass
+                    
+                    user_agent = None
+                    try:
+                        user_agent = await page.evaluate('navigator.userAgent')
+                    except:
+                        pass
+                    
+                    return {
+                        "success": True,
+                        "method": "patchright_camoufox_bypass",
+                        "token": token,
+                        "cookies": cookies,
+                        "user_agent": user_agent or self.user_agent,
+                        "final_url": page.url
+                    }
+                else:
+                    return {"success": False, "error": "CloudFlare bypass failed"}
+                    
+            finally:
+                try:
+                    await page.close()
+                    await context.close()
+                    await browser.close()
+                except:
+                    pass
+                    
+        except Exception as e:
+            logger.error(f"❌ Patchright + Camoufox bypasser error: {str(e)}")
+            return {"success": False, "error": str(e)}
+    
+    async def _use_drission_bypasser(self, challenge_info: Dict[str, Any], components: Dict) -> Dict[str, Any]:
+        """Use DrissionPage with CloudFlare bypasser (fallback)"""
+        try:
+            from solvers.cloudflare_bypass import CloudflareBypasser
+            
+            PageClass = components['page_class']
+            OptionsClass = components['options_class']
+            
+            # Create DrissionPage options
             options = OptionsClass().auto_port()
             options.headless(True)
             options.set_argument("--no-sandbox")
             options.set_argument("--disable-gpu")
             options.set_argument("--disable-dev-shm-usage")
             
-            # Set user agent if available
             if self.user_agent:
                 options.set_user_agent(self.user_agent)
             
-            # Set proxy if available
             if self.proxy:
-                # Parse proxy format: username:password@host:port
                 if '@' in self.proxy:
                     auth_part, host_part = self.proxy.split('@')
                     if ':' in auth_part:
                         username, password = auth_part.split(':', 1)
                         options.set_proxy(f"http://{host_part}")
                         options.set_argument(f"--proxy-auth={username}:{password}")
-                    else:
-                        options.set_proxy(f"http://{self.proxy}")
                 else:
                     options.set_proxy(f"http://{self.proxy}")
             
-            # Create driver
+            # Create driver and navigate
             driver = PageClass(addr_or_opts=options)
             
             try:
-                # Navigate to the URL
                 driver.get(challenge_info["url"])
                 
-                # Use CloudflareBypasser
-                cf_bypasser = BypasserClass(driver, max_retries=5, log=DEBUG_ENHANCED_FEATURES)
-                cf_bypasser.bypass()
+                # Use CloudflareBypasser with DrissionPage
+                bypasser = CloudflareBypasser(driver, max_retries=3, log=DEBUG_ENHANCED_FEATURES)
+                success = await bypasser.bypass()
                 
-                # Check if bypass was successful
-                if cf_bypasser.is_bypassed():
-                    # Try to extract Turnstile token if available
+                if success:
+                    # Extract token and cookies
                     token = None
                     try:
-                        # Look for cf-turnstile-response input
                         turnstile_inputs = driver.eles("tag:input")
                         for input_elem in turnstile_inputs:
                             if "name" in input_elem.attrs and "cf-turnstile-response" in input_elem.attrs["name"]:
@@ -552,22 +687,28 @@ class UnifiedTurnstileHandler:
                     except:
                         pass
                     
-                    if DEBUG_ENHANCED_FEATURES:
-                        logger.info("✅ DrissionPage bypass successful")
+                    cookies = {}
+                    try:
+                        cookies = {cookie.get("name", ""): cookie.get("value", "") for cookie in driver.cookies()}
+                    except:
+                        pass
                     
                     return {
                         "success": True,
                         "method": "drission_bypass",
                         "token": token,
-                        "cookies": {cookie.get("name", ""): cookie.get("value", "") for cookie in driver.cookies()},
-                        "user_agent": driver.user_agent
+                        "cookies": cookies,
+                        "user_agent": driver.user_agent if hasattr(driver, 'user_agent') else self.user_agent
                     }
                 else:
-                    return {"success": False, "error": "DrissionPage bypass failed"}
+                    return {"success": False, "error": "CloudFlare bypass failed"}
                     
             finally:
-                driver.quit()
-                
+                try:
+                    driver.quit()
+                except:
+                    pass
+                    
         except Exception as e:
             logger.error(f"❌ DrissionPage bypasser error: {str(e)}")
             return {"success": False, "error": str(e)}

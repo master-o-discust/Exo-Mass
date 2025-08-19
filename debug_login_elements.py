@@ -6,15 +6,169 @@ Maps all form fields, buttons, and interactive elements for proper automation
 
 import asyncio
 import logging
-from patchright.async_api import async_playwright
+from playwright.async_api import async_playwright
 from config.settings import LOGIN_URL
+from utils.unified_turnstile_handler import create_turnstile_handler
 import json
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+async def detect_turnstile_elements(page, extended=False):
+    """
+    Enhanced Turnstile/CAPTCHA detection with comprehensive sitekey extraction
+    Based on best practices from 2captcha and other professional tools
+    """
+    captcha_elements = []
+    
+    # Primary Turnstile selectors (most common patterns)
+    primary_selectors = [
+        # Cloudflare Turnstile
+        'div[data-sitekey]',  # Most common
+        '#cf-turnstile',      # Standard ID
+        '.cf-turnstile',      # Standard class
+        'div.cf-turnstile',   # Specific div with class
+        '[data-sitekey*="0x"]',  # Turnstile sitekeys start with 0x
+        
+        # Generic CAPTCHA containers
+        '.turnstile-wrapper',
+        '.turnstile-container',
+        '[class*="turnstile"]',
+        '[id*="turnstile"]',
+        
+        # reCAPTCHA (for comparison)
+        '.g-recaptcha',
+        'div[data-sitekey*="6L"]',  # reCAPTCHA sitekeys start with 6L
+        
+        # hCaptcha
+        '.h-captcha',
+        'div[data-sitekey*="h"]',   # Some hCaptcha patterns
+    ]
+    
+    # Extended selectors for deeper search
+    extended_selectors = [
+        # Shadow DOM and iframe patterns
+        'iframe[src*="challenges.cloudflare.com"]',
+        'iframe[src*="turnstile"]',
+        'iframe[src*="captcha"]',
+        
+        # Generic data attributes
+        '[data-cf-turnstile-sitekey]',
+        '[data-turnstile-sitekey]',
+        '[data-captcha-sitekey]',
+        
+        # Form-related patterns
+        'form [data-sitekey]',
+        'div[role="presentation"][data-sitekey]',
+        
+        # Dynamic content patterns
+        '[class*="challenge"]',
+        '[id*="challenge"]',
+        '[class*="captcha"]',
+        '[id*="captcha"]',
+    ]
+    
+    selectors_to_check = primary_selectors
+    if extended:
+        selectors_to_check.extend(extended_selectors)
+    
+    for selector in selectors_to_check:
+        try:
+            elements = await page.query_selector_all(selector)
+            for element in elements:
+                # Extract comprehensive element information
+                element_info = await extract_element_info(element, selector)
+                if element_info and element_info not in captcha_elements:
+                    captcha_elements.append(element_info)
+                    
+        except Exception as e:
+            logger.debug(f"Error with selector {selector}: {e}")
+    
+    # Additional check: scan for hidden inputs with turnstile response
+    try:
+        response_inputs = await page.query_selector_all('input[name*="turnstile"], input[name*="cf-turnstile-response"]')
+        for input_elem in response_inputs:
+            parent = await input_elem.query_selector('xpath=..')
+            if parent:
+                parent_info = await extract_element_info(parent, 'input[name*="turnstile"] parent')
+                if parent_info and parent_info not in captcha_elements:
+                    captcha_elements.append(parent_info)
+    except Exception as e:
+        logger.debug(f"Error checking turnstile response inputs: {e}")
+    
+    return captcha_elements
+
+async def extract_element_info(element, selector):
+    """Extract comprehensive information from a potential CAPTCHA element"""
+    try:
+        # Basic attributes
+        sitekey = await element.get_attribute('data-sitekey')
+        element_id = await element.get_attribute('id')
+        element_class = await element.get_attribute('class')
+        is_visible = await element.is_visible()
+        
+        # Additional sitekey extraction methods
+        if not sitekey:
+            # Try alternative sitekey attributes
+            alt_sitekey_attrs = [
+                'data-cf-turnstile-sitekey',
+                'data-turnstile-sitekey',
+                'data-captcha-sitekey',
+                'data-site-key',
+                'sitekey'
+            ]
+            for attr in alt_sitekey_attrs:
+                sitekey = await element.get_attribute(attr)
+                if sitekey:
+                    break
+        
+        # Determine CAPTCHA type
+        captcha_type = "Unknown"
+        if sitekey:
+            if sitekey.startswith('0x'):
+                captcha_type = "Cloudflare Turnstile"
+            elif sitekey.startswith('6L'):
+                captcha_type = "reCAPTCHA"
+            elif 'h-captcha' in (element_class or '').lower():
+                captcha_type = "hCaptcha"
+            else:
+                captcha_type = "Generic CAPTCHA"
+        
+        # Additional attributes for debugging
+        additional_attrs = {}
+        for attr in ['data-theme', 'data-size', 'data-callback', 'data-action', 'data-appearance']:
+            value = await element.get_attribute(attr)
+            if value:
+                additional_attrs[attr] = value
+        
+        # Get element dimensions and position
+        try:
+            bounding_box = await element.bounding_box()
+            if bounding_box:
+                additional_attrs['dimensions'] = f"{bounding_box['width']}x{bounding_box['height']}"
+                additional_attrs['position'] = f"({bounding_box['x']}, {bounding_box['y']})"
+        except:
+            pass
+        
+        return {
+            'type': captcha_type,
+            'selector': selector,
+            'sitekey': sitekey,
+            'id': element_id,
+            'class': element_class,
+            'visible': is_visible,
+            'additional_attrs': additional_attrs if additional_attrs else None
+        }
+        
+    except Exception as e:
+        logger.debug(f"Error extracting element info: {e}")
+        return None
+
 async def analyze_login_page():
     """Analyze the Epic Games login page to map all interactive elements"""
+    
+    # Create turnstile handler for CloudFlare challenge solving
+    turnstile_handler = create_turnstile_handler()
     
     async with async_playwright() as p:
         # Launch browser with realistic settings
@@ -48,9 +202,37 @@ async def analyze_login_page():
             
             # Check if we're blocked by CloudFlare
             page_content = await page.content()
-            if any(indicator in page_content.lower() for indicator in ['cloudflare', 'checking your browser', 'verifying']):
-                logger.warning("🛡️ CloudFlare challenge detected - manual intervention may be needed")
-                await asyncio.sleep(10)  # Wait for manual solving if needed
+            cloudflare_indicators = [
+                'cloudflare', 'checking your browser', 'verifying', 'turnstile',
+                'enable javascript and cookies to continue', 'challenge-platform',
+                'cdn-cgi/challenge-platform', '_cf_chl_opt', 'window._cf_chl_opt'
+            ]
+            
+            if any(indicator in page_content.lower() for indicator in cloudflare_indicators):
+                logger.warning("🛡️ CloudFlare challenge detected - attempting to solve with Turnstile handler...")
+                
+                # Use the unified turnstile handler to solve the challenge
+                challenge_result = await turnstile_handler.solve_turnstile_challenge(page)
+                
+                if challenge_result.get('success'):
+                    logger.info("✅ CloudFlare challenge solved successfully!")
+                    # Wait for page to settle after challenge resolution
+                    await asyncio.sleep(5)
+                    
+                    # Check if we're now on the correct page
+                    current_url = page.url
+                    logger.info(f"🔗 URL after challenge resolution: {current_url}")
+                    
+                    # Take another screenshot after resolution
+                    await page.screenshot(path="login_page_after_cf.png", full_page=True)
+                    logger.info("📸 Post-CloudFlare screenshot saved")
+                else:
+                    logger.error(f"❌ Failed to solve CloudFlare challenge: {challenge_result.get('error', 'Unknown error')}")
+                    # Still take a screenshot for debugging
+                    await page.screenshot(path="login_page_cf_failed.png", full_page=True)
+                    logger.info("📸 CloudFlare failure screenshot saved")
+            else:
+                logger.info("✅ No CloudFlare challenge detected")
             
             # Take screenshot
             await page.screenshot(path="login_page_analysis.png", full_page=True)
@@ -176,39 +358,34 @@ async def analyze_login_page():
                 except Exception as e:
                     logger.debug(f"   ⚠️ Error with selector {selector}: {e}")
             
-            # 5. Find any CAPTCHA/Turnstile elements
-            captcha_selectors = [
-                '[data-sitekey]',
-                '.cf-turnstile',
-                '.turnstile-wrapper',
-                '.g-recaptcha',
-                '.h-captcha',
-                'iframe[src*="captcha"]',
-                'iframe[src*="turnstile"]'
-            ]
+            # 5. Enhanced CAPTCHA/Turnstile detection with improved sitekey extraction
+            logger.info("\n🛡️ CAPTCHA/TURNSTILE ELEMENTS (Enhanced Detection):")
+            captcha_elements = await detect_turnstile_elements(page)
             
-            logger.info("\n🛡️ CAPTCHA/TURNSTILE ELEMENTS:")
-            captcha_elements = []
-            for selector in captcha_selectors:
-                try:
-                    elements = await page.query_selector_all(selector)
-                    for element in elements:
-                        sitekey = await element.get_attribute('data-sitekey')
-                        element_id = await element.get_attribute('id')
-                        element_class = await element.get_attribute('class')
-                        is_visible = await element.is_visible()
-                        
-                        element_info = {
-                            'selector': selector,
-                            'sitekey': sitekey,
-                            'id': element_id,
-                            'class': element_class,
-                            'visible': is_visible
-                        }
-                        captcha_elements.append(element_info)
-                        logger.info(f"   ✅ {selector}: sitekey='{sitekey}', id='{element_id}', visible={is_visible}")
-                except Exception as e:
-                    logger.debug(f"   ⚠️ Error with selector {selector}: {e}")
+            for element_info in captcha_elements:
+                logger.info(f"   ✅ {element_info['type']}: {element_info['selector']}")
+                logger.info(f"      🔑 Sitekey: '{element_info['sitekey']}'")
+                logger.info(f"      🆔 ID: '{element_info['id']}'")
+                logger.info(f"      👁️ Visible: {element_info['visible']}")
+                if element_info.get('additional_attrs'):
+                    logger.info(f"      📋 Additional: {element_info['additional_attrs']}")
+            
+            if not captcha_elements:
+                logger.info("   ⚠️ No CAPTCHA/Turnstile elements detected initially")
+                logger.info("   🔄 Waiting for dynamic content to load...")
+                
+                # Wait for potential dynamic content
+                await asyncio.sleep(5)
+                
+                # Try again with extended detection
+                captcha_elements = await detect_turnstile_elements(page, extended=True)
+                
+                if captcha_elements:
+                    logger.info("   ✅ Found CAPTCHA elements after waiting:")
+                    for element_info in captcha_elements:
+                        logger.info(f"      🔑 {element_info['type']}: sitekey='{element_info['sitekey']}'")
+                else:
+                    logger.info("   ❌ No CAPTCHA/Turnstile elements found even after waiting")
             
             # 6. Check for any error messages or notifications
             error_selectors = [
