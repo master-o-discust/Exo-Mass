@@ -13,6 +13,8 @@ from .browser_manager import BrowserManager
 from .auth_handler import AuthHandler, AccountStatus
 from .login_handler import LoginHandler
 from .file_manager import FileManager
+from .screenshot_monitor import ScreenshotMonitor
+from .dropbox_uploader import DropboxUploader
 
 from config.settings import (
     MIN_DELAY_SINGLE_PROXY, MAX_DELAY_SINGLE_PROXY,
@@ -33,6 +35,10 @@ class AccountChecker:
         self.auth_handler = AuthHandler(user_id)
         self.user_id = user_id
         # Login handler will be created per check with specific user agent and proxy
+        
+        # Initialize screenshot monitor
+        self.dropbox_uploader = DropboxUploader()
+        self.screenshot_monitor = ScreenshotMonitor(self.dropbox_uploader)
         
         # Delay settings for intelligent timing
         self.min_delay_single = MIN_DELAY_SINGLE_PROXY
@@ -81,6 +87,9 @@ class AccountChecker:
                 page = await context.new_page()
                 
                 try:
+                    # Start screenshot monitoring every 5 seconds
+                    await self.screenshot_monitor.start_monitoring(page, email, "account_check")
+                    
                     # Create login handler with the same user agent and proxy
                     login_handler = LoginHandler(self.auth_handler, user_agent=user_agent, proxy=proxy)
                     
@@ -137,6 +146,12 @@ class AccountChecker:
                     return AccountStatus.VALID, final_result
                     
                 finally:
+                    # Stop screenshot monitoring
+                    try:
+                        await self.screenshot_monitor.stop_monitoring()
+                    except Exception as e:
+                        logger.error(f"📸 {email} - Error stopping screenshot monitor: {e}")
+                    
                     # Clean up page
                     try:
                         await page.close()

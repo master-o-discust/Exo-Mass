@@ -66,6 +66,33 @@ class TurnstileAPIServer:
         <title>Turnstile Solver</title>
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async></script>
         <script>
+            // Enhanced JavaScript based on 2captcha documentation for parameter interception
+            const i = setInterval(() => {
+                if (window.turnstile) {
+                    clearInterval(i);
+                    const originalRender = window.turnstile.render;
+                    window.turnstile.render = (a, b) => {
+                        // Log parameters for debugging (as per 2captcha docs)
+                        let params = {
+                            type: "TurnstileTaskProxyless",
+                            websiteKey: b.sitekey,
+                            websiteURL: window.location.href,
+                            data: b.cData,
+                            pagedata: b.chlPageData,
+                            action: b.action,
+                            userAgent: navigator.userAgent
+                        };
+                        console.log('Turnstile parameters:', JSON.stringify(params));
+                        
+                        // Store callback for later use
+                        window.tsCallback = b.callback;
+                        
+                        // Call original render function
+                        return originalRender ? originalRender(a, b) : 'enhanced-solver';
+                    };
+                }
+            }, 10);
+
             async function fetchIP() {
                 try {
                     const response = await fetch('https://api64.ipify.org?format=json');
@@ -164,8 +191,8 @@ class TurnstileAPIServer:
         logger.success(f"Browser pool initialized with {self.browser_pool.qsize()} browsers")
 
 
-    async def _solve_turnstile(self, task_id: str, url: str, sitekey: str, action: str = None, cdata: str = None):
-        """Solve the Turnstile challenge."""
+    async def _solve_turnstile(self, task_id: str, url: str, sitekey: str, action: str = None, cdata: str = None, pagedata: str = None):
+        """Solve the Turnstile challenge using enhanced methods from 2captcha documentation."""
         proxy = None
 
         index, browser = await self.browser_pool.get()
@@ -202,7 +229,18 @@ class TurnstileAPIServer:
                 logger.debug(f"Browser {index}: Setting up page data and route")
 
             url_with_slash = url + "/" if not url.endswith("/") else url
-            turnstile_div = f'<div class="cf-turnstile" style="background: white;" data-sitekey="{sitekey}"' + (f' data-action="{action}"' if action else '') + (f' data-cdata="{cdata}"' if cdata else '') + '></div>'
+            
+            # Enhanced turnstile div creation based on 2captcha documentation
+            # Support for all Turnstile parameters: sitekey, action, cdata, and pagedata (chlPageData)
+            turnstile_div = f'<div class="cf-turnstile" style="background: white;" data-sitekey="{sitekey}"'
+            if action:
+                turnstile_div += f' data-action="{action}"'
+            if cdata:
+                turnstile_div += f' data-cdata="{cdata}"'
+            if pagedata:
+                turnstile_div += f' data-chl-page-data="{pagedata}"'
+            turnstile_div += '></div>'
+            
             page_data = self.HTML_TEMPLATE.replace("<!-- cf turnstile -->", turnstile_div)
 
             await page.route(url_with_slash, lambda route: route.fulfill(body=page_data, status=200))
@@ -216,12 +254,24 @@ class TurnstileAPIServer:
             if self.debug:
                 logger.debug(f"Browser {index}: Starting Turnstile response retrieval loop")
 
-            for _ in range(10):
+            for attempt in range(10):
                 try:
-                    turnstile_check = await page.input_value("[name=cf-turnstile-response]", timeout=2000)
+                    # Enhanced token retrieval based on 2captcha documentation
+                    # Try cf-turnstile-response first, then g-recaptcha-response for compatibility mode
+                    turnstile_check = ""
+                    
+                    try:
+                        turnstile_check = await page.input_value("[name=cf-turnstile-response]", timeout=2000)
+                    except:
+                        try:
+                            # Fallback to g-recaptcha-response for reCAPTCHA compatibility mode
+                            turnstile_check = await page.input_value("[name=g-recaptcha-response]", timeout=2000)
+                        except:
+                            pass
+                    
                     if turnstile_check == "":
                         if self.debug:
-                            logger.debug(f"Browser {index}: Attempt {_} - No Turnstile response yet")
+                            logger.debug(f"Browser {index}: Attempt {attempt + 1}/10 - No Turnstile response yet")
                         
                         await page.locator("//div[@class='cf-turnstile']").click(timeout=1000)
                         await asyncio.sleep(0.5)
@@ -233,7 +283,9 @@ class TurnstileAPIServer:
                         self.results[task_id] = {"value": turnstile_check, "elapsed_time": elapsed_time}
                         self._save_results()
                         break
-                except:
+                except Exception as e:
+                    if self.debug:
+                        logger.debug(f"Browser {index}: Attempt {attempt + 1} error: {str(e)}")
                     pass
 
             if self.results.get(task_id) == "CAPTCHA_NOT_READY":
@@ -259,8 +311,21 @@ class TurnstileAPIServer:
         sitekey = request.args.get('sitekey')
         action = request.args.get('action')
         cdata = request.args.get('cdata')
+        pagedata = request.args.get('pagedata')  # Added support for chlPageData as per 2captcha docs
+
+        # Enhanced logging for API requests
+        logger.info(f"🔄 New Turnstile request received:")
+        logger.info(f"   URL: {url}")
+        logger.info(f"   Sitekey: {sitekey}")
+        if action:
+            logger.info(f"   Action: {action}")
+        if cdata:
+            logger.info(f"   CData: {cdata}")
+        if pagedata:
+            logger.info(f"   PageData: {pagedata[:50]}..." if len(pagedata) > 50 else f"   PageData: {pagedata}")
 
         if not url or not sitekey:
+            logger.error("❌ Missing required parameters: url and sitekey are required")
             return jsonify({
                 "status": "error",
                 "error": "Both 'url' and 'sitekey' are required"
@@ -269,14 +334,16 @@ class TurnstileAPIServer:
         task_id = str(uuid.uuid4())
         self.results[task_id] = "CAPTCHA_NOT_READY"
 
-        try:
-            asyncio.create_task(self._solve_turnstile(task_id=task_id, url=url, sitekey=sitekey, action=action, cdata=cdata))
+        logger.info(f"✅ Task created with ID: {task_id}")
+        logger.info(f"🚀 Starting Turnstile solving task...")
 
-            if self.debug:
-                logger.debug(f"Request completed with taskid {task_id}.")
+        try:
+            asyncio.create_task(self._solve_turnstile(task_id=task_id, url=url, sitekey=sitekey, action=action, cdata=cdata, pagedata=pagedata))
+
+            logger.success(f"Task {task_id} queued successfully")
             return jsonify({"task_id": task_id}), 202
         except Exception as e:
-            logger.error(f"Unexpected error processing request: {str(e)}")
+            logger.error(f"❌ Unexpected error processing request: {str(e)}")
             return jsonify({
                 "status": "error",
                 "error": str(e)
@@ -286,14 +353,30 @@ class TurnstileAPIServer:
         """Return solved data"""
         task_id = request.args.get('id')
 
+        logger.info(f"📋 Result request for task: {task_id}")
+
         if not task_id or task_id not in self.results:
+            logger.error(f"❌ Invalid task ID: {task_id}")
             return jsonify({"status": "error", "error": "Invalid task ID/Request parameter"}), 400
 
         result = self.results[task_id]
         status_code = 200
 
-        if "CAPTCHA_FAIL" in result:
-            status_code = 422
+        # Log the result being returned
+        if isinstance(result, dict):
+            if result.get("value") == "CAPTCHA_NOT_READY":
+                logger.info(f"⏳ Task {task_id}: Still processing...")
+            elif result.get("value") == "CAPTCHA_FAIL":
+                logger.warning(f"❌ Task {task_id}: Failed after {result.get('elapsed_time', 'unknown')}s")
+                status_code = 422
+            else:
+                logger.success(f"✅ Task {task_id}: Solved in {result.get('elapsed_time', 'unknown')}s")
+        else:
+            if result == "CAPTCHA_NOT_READY":
+                logger.info(f"⏳ Task {task_id}: Still processing...")
+            elif result == "CAPTCHA_FAIL":
+                logger.warning(f"❌ Task {task_id}: Failed")
+                status_code = 422
 
         return result, status_code
 
@@ -318,7 +401,10 @@ class TurnstileAPIServer:
 
                     <ul class="list-disc pl-6 mb-6 text-gray-300">
                         <li><strong>url</strong>: The URL where Turnstile is to be validated</li>
-                        <li><strong>sitekey</strong>: The site key for Turnstile</li>
+                        <li><strong>sitekey</strong>: The site key for Turnstile (found in data-sitekey attribute)</li>
+                        <li><strong>action</strong> (optional): The action parameter for Cloudflare Challenge pages</li>
+                        <li><strong>cdata</strong> (optional): The cData parameter for Cloudflare Challenge pages</li>
+                        <li><strong>pagedata</strong> (optional): The chlPageData parameter for Cloudflare Challenge pages</li>
                     </ul>
 
                     <div class="bg-gray-700 p-4 rounded-lg mb-6 border border-red-500">
