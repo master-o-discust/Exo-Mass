@@ -152,7 +152,7 @@ class AsyncTurnstileSolver:
             logger.error(f"❌ Error parsing proxy for Camoufox {proxy_str}: {e}")
             return None
 
-    async def _setup_page(self, browser, url: str, sitekey: str, action: str = None, cdata: str = None):
+    async def _setup_page(self, browser, url: str, sitekey: str, action: str = None, cdata: str = None, pagedata: str = None):
         """Set up the page with Turnstile widget."""
         if self.browser_type == "chrome":
             page = browser.pages[0]
@@ -161,7 +161,15 @@ class AsyncTurnstileSolver:
 
         url_with_slash = url + "/" if not url.endswith("/") else url
 
-        turnstile_div = f'<div class="cf-turnstile" data-sitekey="{sitekey}"' + (f' data-action="{action}"' if action else '') + (f' data-cdata="{cdata}"' if cdata else '') + '></div>'
+        # Enhanced turnstile div creation based on 2captcha documentation
+        turnstile_div = f'<div class="cf-turnstile" data-sitekey="{sitekey}"'
+        if action:
+            turnstile_div += f' data-action="{action}"'
+        if cdata:
+            turnstile_div += f' data-cdata="{cdata}"'
+        if pagedata:
+            turnstile_div += f' data-chl-page-data="{pagedata}"'
+        turnstile_div += '></div>'
         page_data = self.HTML_TEMPLATE.replace("<!-- cf turnstile -->", turnstile_div)
 
         if self.debug:
@@ -173,29 +181,48 @@ class AsyncTurnstileSolver:
         return page
 
     async def _get_turnstile_response(self, page, max_attempts: int = 10) -> Optional[str]:
-        """Attempt to retrieve Turnstile response."""
-        for _ in range(max_attempts):
+        """Attempt to retrieve Turnstile response using enhanced methods from 2captcha documentation."""
+        for attempt in range(max_attempts):
             if self.debug:
-                logger.debug(f"Attempt {_ + 1}: No Turnstile response yet.")
+                logger.debug(f"Attempt {attempt + 1}/{max_attempts}: Checking for Turnstile response...")
 
             try:
-                turnstile_check = await page.input_value("[name=cf-turnstile-response]")
+                # Enhanced token retrieval based on 2captcha documentation
+                turnstile_check = ""
+                
+                try:
+                    turnstile_check = await page.input_value("[name=cf-turnstile-response]")
+                except:
+                    try:
+                        # Fallback to g-recaptcha-response for reCAPTCHA compatibility mode
+                        turnstile_check = await page.input_value("[name=g-recaptcha-response]")
+                    except:
+                        pass
+                
                 if turnstile_check == "":
-
                     await page.click("//div[@class='cf-turnstile']", timeout=3000)
                     await asyncio.sleep(0.5)
                 else:
+                    # Try to get the value from cf-turnstile-response first
                     element = await page.query_selector("[name=cf-turnstile-response]")
                     if element:
-                        turnstile_element = await page.query_selector("[name=cf-turnstile-response]")
-                        return await turnstile_element.get_attribute("value")
-                    break
-            except:
+                        return await element.get_attribute("value")
+                    
+                    # Fallback to g-recaptcha-response
+                    element = await page.query_selector("[name=g-recaptcha-response]")
+                    if element:
+                        return await element.get_attribute("value")
+                    
+                    # If we have a value but no element, return the value
+                    return turnstile_check
+            except Exception as e:
+                if self.debug:
+                    logger.debug(f"Attempt {attempt + 1} error: {str(e)}")
                 pass
 
         return None
 
-    async def solve(self, url: str, sitekey: str, action: str = None, cdata: str = None):
+    async def solve(self, url: str, sitekey: str, action: str = None, cdata: str = None, pagedata: str = None):
         """
         Solve the Turnstile challenge and return the result.
         """
@@ -226,7 +253,7 @@ class AsyncTurnstileSolver:
             ).start()
 
         try:
-            page = await self._setup_page(browser, url, sitekey, action, cdata)
+            page = await self._setup_page(browser, url, sitekey, action, cdata, pagedata)
             turnstile_value = await self._get_turnstile_response(page)
 
             elapsed_time = round(time.time() - start_time, 3)
@@ -264,7 +291,7 @@ class AsyncTurnstileSolver:
         return result
 
 
-async def get_turnstile_token(url: str, sitekey: str, action: str = None, cdata: str = None, debug: bool = False, headless: bool = False, useragent: str = None, browser_type: str = "camoufox"):
+async def get_turnstile_token(url: str, sitekey: str, action: str = None, cdata: str = None, pagedata: str = None, debug: bool = False, headless: bool = False, useragent: str = None, browser_type: str = "camoufox"):
     """Legacy wrapper function for backward compatibility."""
     browser_types = [
         'chromium',
@@ -278,7 +305,7 @@ async def get_turnstile_token(url: str, sitekey: str, action: str = None, cdata:
         logger.error(f"You must specify a {COLORS.get('YELLOW')}User-Agent{COLORS.get('RESET')} for Turnstile Solver or use {COLORS.get('GREEN')}camoufox{COLORS.get('RESET')} without useragent")
     else:
         solver = AsyncTurnstileSolver(debug=debug, useragent=useragent, headless=headless, browser_type=browser_type)
-        result = await solver.solve(url=url, sitekey=sitekey, action=action, cdata=cdata)
+        result = await solver.solve(url=url, sitekey=sitekey, action=action, cdata=cdata, pagedata=pagedata)
         return result.__dict__
 
 

@@ -23,8 +23,8 @@ async def start_api_server():
         app = create_app(
             headless=True, 
             useragent=None, 
-            debug=False, 
-            browser_type="camoufox", 
+            debug=True,  # Enable debug mode for more logging
+            browser_type="chromium", 
             thread=2, 
             proxy_support=False
         )

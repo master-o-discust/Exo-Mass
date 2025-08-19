@@ -18,6 +18,7 @@ import time
 import aiohttp
 import base64
 import re
+import json
 import os
 from typing import Dict, Any, Optional, List
 from urllib.parse import urlparse
@@ -270,13 +271,20 @@ class UnifiedTurnstileHandler:
             basic_detection = await detect_turnstile_challenge(page, max_wait_time=30)
             
             if basic_detection.get('detected'):
-                # Use the enhanced sitekey extractor to get the ACTUAL sitekey
-                logger.info("🔍 Using enhanced sitekey extraction for detected challenge...")
-                actual_sitekey = await EnhancedSitekeyExtractor.extract_sitekey_comprehensive(page)
+                # Use the enhanced parameter extractor to get ALL parameters including pagedata
+                logger.info("🔍 Using enhanced parameter extraction for detected challenge...")
+                params = await EnhancedSitekeyExtractor.extract_turnstile_parameters_comprehensive(page)
                 
-                if actual_sitekey:
-                    basic_detection['sitekey'] = actual_sitekey
-                    logger.info(f"✅ Enhanced detection found actual sitekey: {actual_sitekey}")
+                if params['sitekey']:
+                    # Update basic_detection with all extracted parameters
+                    basic_detection.update(params)
+                    logger.info(f"✅ Enhanced detection found parameters: sitekey={params['sitekey']}")
+                    if params['action']:
+                        logger.info(f"   Action: {params['action']}")
+                    if params['cdata']:
+                        logger.info(f"   CData: {params['cdata']}")
+                    if params['pagedata']:
+                        logger.info(f"   PageData: {params['pagedata']}")
                 else:
                     logger.warning("⚠️ Enhanced detection could not extract sitekey")
                 
@@ -380,6 +388,8 @@ class UnifiedTurnstileHandler:
                     params["action"] = challenge_info["action"]
                 if challenge_info.get("cdata"):
                     params["cdata"] = challenge_info["cdata"]
+                if challenge_info.get("pagedata"):
+                    params["pagedata"] = challenge_info["pagedata"]
                 
                 # Make initial request to start solving
                 async with aiohttp.ClientSession() as session:
@@ -416,35 +426,51 @@ class UnifiedTurnstileHandler:
                         async with aiohttp.ClientSession() as session:
                             async with session.get(result_url, params={"id": task_id}, timeout=aiohttp.ClientTimeout(total=5)) as response:
                                 if response.status == 200:
-                                    # Turnstile API returns plain text, not JSON
-                                    token = await response.text()
-                                    token = token.strip()  # Remove any whitespace
+                                    # Handle both JSON and plain text responses
+                                    response_text = await response.text()
+                                    response_text = response_text.strip()
+                                    
+                                    # Try to parse as JSON first
+                                    try:
+                                        result_data = json.loads(response_text)
+                                        if isinstance(result_data, dict):
+                                            token = result_data.get("value", response_text)
+                                            api_elapsed_time = result_data.get("elapsed_time", 0)
+                                        else:
+                                            token = response_text
+                                            api_elapsed_time = 0
+                                    except json.JSONDecodeError:
+                                        # Plain text response
+                                        token = response_text
+                                        api_elapsed_time = 0
                                     
                                     # Check if we have a successful result
                                     if token and token != "CAPTCHA_NOT_READY" and token != "CAPTCHA_FAIL":
                                         elapsed_time = round(time.time() - start_time, 3)
                                         
                                         if DEBUG_ENHANCED_FEATURES:
-                                            logger.info(f"✅ Primary Turnstile solver successful in {elapsed_time}s")
+                                            logger.info(f"✅ Primary Turnstile solver successful in {elapsed_time}s (API: {api_elapsed_time}s)")
                                         
                                         return {
                                             "success": True,
                                             "token": token,
                                             "method": "turnstile_solver",
                                             "elapsed_time": elapsed_time,
+                                            "api_elapsed_time": api_elapsed_time,
                                             "retry_attempt": retry_attempt
                                         }
                                     elif token == "CAPTCHA_FAIL":
                                         elapsed_time = round(time.time() - start_time, 3)
                                         if retry_attempt < max_retries:
                                             if DEBUG_ENHANCED_FEATURES:
-                                                logger.warning(f"❌ CAPTCHA_FAIL received, will refresh page and retry ({retry_attempt + 1}/{max_retries})")
+                                                logger.warning(f"❌ CAPTCHA_FAIL received (API: {api_elapsed_time}s), will refresh page and retry ({retry_attempt + 1}/{max_retries})")
                                             break  # Break out of polling loop to retry with page refresh
                                         else:
                                             return {
                                                 "success": False,
                                                 "error": f"Turnstile solver failed after {max_retries + 1} attempts",
-                                                "elapsed_time": elapsed_time
+                                                "elapsed_time": elapsed_time,
+                                                "api_elapsed_time": api_elapsed_time
                                             }
                                     # If CAPTCHA_NOT_READY, continue polling
                                 elif response.status == 422:
@@ -1068,25 +1094,53 @@ class UnifiedTurnstileHandler:
     async def inject_turnstile_token(self, page: Page, token: str):
         """Inject the solved Turnstile token into the current page"""
         try:
-            # Find the turnstile response input field
+            # Method 1: Check if this is a Cloudflare Challenge page with callback
+            try:
+                callback_result = await page.evaluate(f"""
+                    () => {{
+                        // For Cloudflare Challenge pages, use the callback method
+                        if (window.tsCallback && typeof window.tsCallback === 'function') {{
+                            console.log('🎯 Using Turnstile callback for Cloudflare Challenge page');
+                            window.tsCallback('{token}');
+                            return {{ success: true, method: 'callback' }};
+                        }}
+                        return {{ success: false }};
+                    }}
+                """)
+                
+                if callback_result.get('success'):
+                    if DEBUG_ENHANCED_FEATURES:
+                        logger.info("✅ Turnstile token injected via callback (Cloudflare Challenge page)")
+                    return
+            except Exception as e:
+                logger.debug(f"Callback injection failed: {e}")
+
+            # Method 2: Standard input field injection (for standalone captchas)
             response_input = await page.query_selector('input[name="cf-turnstile-response"]')
             if response_input:
                 await response_input.fill(token)
                 if DEBUG_ENHANCED_FEATURES:
                     logger.info("✅ Turnstile token injected into response field")
             else:
-                # Create the response field if it doesn't exist
-                await page.evaluate(f"""
-                    () => {{
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = 'cf-turnstile-response';
-                        input.value = '{token}';
-                        document.body.appendChild(input);
-                    }}
-                """)
-                if DEBUG_ENHANCED_FEATURES:
-                    logger.info("✅ Turnstile response field created and token injected")
+                # Try g-recaptcha-response for compatibility mode
+                recaptcha_input = await page.query_selector('input[name="g-recaptcha-response"]')
+                if recaptcha_input:
+                    await recaptcha_input.fill(token)
+                    if DEBUG_ENHANCED_FEATURES:
+                        logger.info("✅ Turnstile token injected into g-recaptcha-response field")
+                else:
+                    # Create the response field if it doesn't exist
+                    await page.evaluate(f"""
+                        () => {{
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'cf-turnstile-response';
+                            input.value = '{token}';
+                            document.body.appendChild(input);
+                        }}
+                    """)
+                    if DEBUG_ENHANCED_FEATURES:
+                        logger.info("✅ Turnstile response field created and token injected")
                 
         except Exception as e:
             logger.warning(f"⚠️ Error injecting Turnstile token: {e}")

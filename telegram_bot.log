@@ -1,0 +1,506 @@
+2025-08-19 05:07:43.306 | INFO     | utils.api_key_manager:get_or_create_api_key:58 - ✅ Using API key from environment: kQXw0j_U...
+2025-08-19 05:07:43,904 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-08-19 05:07:43,905 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-08-19 05:07:43,905 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-08-19 05:07:43,905 - __main__ - INFO - 🔄 Dropbox token refresh scheduled every 3 hours
+2025-08-19 05:07:43,905 - __main__ - INFO - 🤖 Starting Exo Mass Checker Bot with Enhanced Turnstile Bypass...
+2025-08-19 05:07:43,905 - __main__ - INFO - 🔧 Enhanced Browser: True (camoufox)
+2025-08-19 05:07:43,905 - __main__ - INFO - 🛡️ Turnstile Service: False
+2025-08-19 05:07:43,905 - __main__ - INFO - 🔧 BotsForge Service: True
+2025-08-19 05:07:43,905 - __main__ - INFO - 🌐 BotsForge API: http://127.0.0.1:5033
+2025-08-19 05:07:44,258 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getMe "HTTP/1.1 200 OK"
+2025-08-19 05:07:44,372 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/deleteWebhook "HTTP/1.1 200 OK"
+2025-08-19 05:07:44,374 - apscheduler.scheduler - INFO - Added job "<lambda>" to job store "default"
+2025-08-19 05:07:44,374 - apscheduler.scheduler - INFO - Added job "<lambda>" to job store "default"
+2025-08-19 05:07:44,374 - apscheduler.scheduler - INFO - Added job "dropbox_token_refresh" to job store "default"
+2025-08-19 05:07:44,374 - apscheduler.scheduler - INFO - Scheduler started
+2025-08-19 05:07:44,374 - telegram.ext.Application - INFO - Application started
+2025-08-19 05:07:44,905 - apscheduler.scheduler - INFO - Removed job cf60cebd60424e1f90706bec653d22c8
+2025-08-19 05:07:44,905 - apscheduler.executors.default - INFO - Running job "<lambda> (trigger: date[2025-08-19 05:07:44 UTC], next run at: 2025-08-19 05:07:44 UTC)" (scheduled at 2025-08-19 05:07:44.904500+00:00)
+2025-08-19 05:07:44,905 - __main__ - INFO - 🚀 Initializing Mass-checker systems...
+2025-08-19 05:07:44,906 - utils.dropbox_uploader - INFO - Refreshing Dropbox access token...
+2025-08-19 05:07:44,907 - utils.resource_monitor - INFO - 🔍 Starting resource monitoring
+2025-08-19 05:07:45,908 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 134.0MB (+0.0MB), CPU: 0.0%
+2025-08-19 05:07:45,908 - apscheduler.scheduler - INFO - Removed job 3f8967bfff634c70971c01b3da7dc741
+2025-08-19 05:07:45,908 - apscheduler.executors.default - INFO - Running job "<lambda> (trigger: date[2025-08-19 05:07:45 UTC], next run at: 2025-08-19 05:07:45 UTC)" (scheduled at 2025-08-19 05:07:45.904945+00:00)
+2025-08-19 05:07:46,141 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/setMyCommands "HTTP/1.1 200 OK"
+2025-08-19 05:07:46,141 - __main__ - INFO - Bot commands set up successfully!
+2025-08-19 05:07:46,141 - apscheduler.executors.default - INFO - Job "<lambda> (trigger: date[2025-08-19 05:07:45 UTC], next run at: 2025-08-19 05:07:45 UTC)" executed successfully
+2025-08-19 05:07:46,426 - utils.dropbox_uploader - INFO - Dropbox access token refreshed successfully (expires in 4.0 hours)
+2025-08-19 05:07:53,870 - __main__ - INFO - ✅ Dropbox access token initialized and base folders verified
+2025-08-19 05:07:53,870 - utils.solver_manager - INFO - 🚀 Checking available Turnstile/Cloudflare solvers...
+2025-08-19 05:07:53,960 - utils.solver_manager - INFO - ✅ Turnstile Solver initialized successfully
+2025-08-19 05:07:54,043 - utils.display_detector - INFO - [05:07:54] [[34mINFO[0m] -> 🖥️ No DISPLAY environment variable found
+2025-08-19 05:07:54,043 - utils.display_detector - INFO - [05:07:54] [[34mINFO[0m] -> 🖥️ Detected headless environment
+2025-08-19 05:07:54,043 - utils.display_detector - INFO - [05:07:54] [[34mINFO[0m] -> 🖥️ Browser config: headless=True, display=False, pyautogui=False
+2025-08-19 05:07:54.043 | INFO     | solvers.cloudflare_botsforge.browser:<module>:40 - ℹ️ PyAutoGUI disabled - running in headless mode
+2025-08-19 05:07:54,049 - utils.solver_manager - INFO - ✅ BotsForge CloudFlare solver initialized successfully
+2025-08-19 05:07:54,049 - utils.solver_manager - INFO - ✅ Patchright + Camoufox CloudFlare bypasser initialized successfully
+2025-08-19 05:07:54,049 - utils.solver_manager - INFO - ✅ Solver initialization complete: 3/3 solvers available
+2025-08-19 05:07:54,049 - utils.solver_manager - INFO -    ✅ turnstile_solver: Ready
+2025-08-19 05:07:54,049 - utils.solver_manager - INFO -    ✅ botsforge: Ready
+2025-08-19 05:07:54,049 - utils.solver_manager - INFO -    ✅ drission_bypass: Ready
+2025-08-19 05:07:54,049 - __main__ - INFO - ✅ All systems initialized successfully!
+2025-08-19 05:07:54,049 - apscheduler.executors.default - INFO - Job "<lambda> (trigger: date[2025-08-19 05:07:44 UTC], next run at: 2025-08-19 05:07:44 UTC)" executed successfully
+2025-08-19 05:07:54,728 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:08:04,844 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:08:14,960 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:08:16,911 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 172.6MB (+38.6MB), CPU: 0.8%
+2025-08-19 05:08:25,079 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:08:35,196 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:08:45,312 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:08:47,915 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 172.6MB (+38.6MB), CPU: 0.0%
+2025-08-19 05:08:55,451 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:09:05,566 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:09:15,680 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:09:18,918 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 172.6MB (+38.6MB), CPU: 0.0%
+2025-08-19 05:09:25,795 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:09:35,959 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:09:46,074 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:09:49,923 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 172.6MB (+38.6MB), CPU: 0.0%
+2025-08-19 05:09:56,193 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:10:06,308 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:10:16,425 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:10:20,928 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 172.6MB (+38.6MB), CPU: 0.0%
+2025-08-19 05:10:26,543 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:10:36,658 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:10:46,773 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:10:51,932 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 172.6MB (+38.6MB), CPU: 0.0%
+2025-08-19 05:10:56,898 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:11:07,013 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:11:17,132 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:11:22,938 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 172.6MB (+38.6MB), CPU: 0.0%
+2025-08-19 05:11:27,250 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:11:37,366 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:11:47,483 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:11:53,944 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 172.6MB (+38.6MB), CPU: 0.0%
+2025-08-19 05:11:57,600 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:12:07,715 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:12:17,834 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:12:24,952 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 172.6MB (+38.6MB), CPU: 0.0%
+2025-08-19 05:12:27,949 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:12:38,063 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:12:48,179 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:12:55,959 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 172.6MB (+38.6MB), CPU: 0.0%
+2025-08-19 05:12:58,293 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:13:08,411 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:13:18,526 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:13:26,966 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 172.8MB (+38.8MB), CPU: 0.0%
+2025-08-19 05:13:28,641 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:13:38,755 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:13:48,870 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:13:57,976 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 172.8MB (+38.8MB), CPU: 0.0%
+2025-08-19 05:13:58,985 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:14:09,101 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:14:13,117 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:14:13,624 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/sendMessage "HTTP/1.1 200 OK"
+2025-08-19 05:14:14,568 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:14:14,798 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/answerCallbackQuery "HTTP/1.1 200 OK"
+2025-08-19 05:14:15,054 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/editMessageText "HTTP/1.1 200 OK"
+2025-08-19 05:14:17,790 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:14:17,905 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getFile "HTTP/1.1 200 OK"
+2025-08-19 05:14:18,018 - httpx - INFO - HTTP Request: GET https://api.telegram.org/file/bot8243582019%3AAAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/documents/file_1.txt "HTTP/1.1 200 OK"
+2025-08-19 05:14:21,459 - utils.dropbox_uploader - INFO - File uploaded to Dropbox: /ExoMassChecker/user_uploads/8487454378/2025-08-19/accounts/726486011-107X-Epic-Games-Accounts.txt
+2025-08-19 05:14:21,459 - handlers.file_handler - INFO - Detection results: 0 proxies, 2 accounts
+2025-08-19 05:14:21,705 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/sendMessage "HTTP/1.1 200 OK"
+2025-08-19 05:14:23,761 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:14:24,001 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/answerCallbackQuery "HTTP/1.1 200 OK"
+2025-08-19 05:14:24,262 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/editMessageText "HTTP/1.1 200 OK"
+2025-08-19 05:14:27,252 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:14:27,367 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getFile "HTTP/1.1 200 OK"
+2025-08-19 05:14:27,484 - httpx - INFO - HTTP Request: GET https://api.telegram.org/file/bot8243582019%3AAAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/documents/file_0.txt "HTTP/1.1 200 OK"
+2025-08-19 05:14:28,978 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 173.3MB (+39.2MB), CPU: 0.2%
+2025-08-19 05:14:31,846 - utils.dropbox_uploader - INFO - File uploaded to Dropbox: /ExoMassChecker/user_uploads/8487454378/2025-08-19/uploads/AM 2.txt
+2025-08-19 05:14:31,847 - handlers.file_handler - INFO - Detection results: 1 proxies, 0 accounts
+2025-08-19 05:14:32,106 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/sendMessage "HTTP/1.1 200 OK"
+2025-08-19 05:14:32,949 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:14:33,181 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/answerCallbackQuery "HTTP/1.1 200 OK"
+2025-08-19 05:14:33,423 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/editMessageText "HTTP/1.1 200 OK"
+2025-08-19 05:14:33,467 - utils.browser_manager - INFO - 🚀 Initializing enhanced browser automation
+2025-08-19 05:14:33,730 - utils.browser_manager - INFO - ✅ Using Patchright for enhanced stealth
+2025-08-19 05:14:33,730 - utils.account_checker - INFO - 🚀 Starting batch check of 2 accounts...
+2025-08-19 05:14:33,730 - utils.account_checker - INFO - 🚀 omarabailisd35t@outlook.com - Starting account check...
+2025-08-19 05:14:33,740 - utils.browser_manager - INFO - 🔧 Parsed proxy: http://ca.proxy-jet.io:1010 (auth: yes)
+2025-08-19 05:14:33,740 - utils.account_checker - INFO - 🚀 exowinbot@icloud.com - Starting account check...
+2025-08-19 05:14:33,743 - utils.browser_manager - INFO - 🔧 Parsed proxy: http://ca.proxy-jet.io:1010 (auth: yes)
+/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/urllib3/connectionpool.py:1097: InsecureRequestWarning: Unverified HTTPS request is being made to host 'ca.proxy-jet.io'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#tls-warnings
+  warnings.warn(
+2025-08-19 05:14:35,680 - utils.browser_manager - INFO - 🦊 Launched Camoufox browser with proxy: 250712La4qP-resi-US:049NOA7a4VNHoIM@ca.proxy-jet.io:1010
+2025-08-19 05:14:35,762 - utils.browser_manager - INFO - 🆕 Created fresh isolated context for 250712La4qP-resi-US:049NOA7a4VNHoIM@ca.proxy-jet.io:1010
+2025-08-19 05:14:36,404 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Starting screenshot monitoring every 5 seconds...
+2025-08-19 05:14:36,404 - utils.login_handler - INFO - 🔐 omarabailisd35t@outlook.com - Starting login process...
+2025-08-19 05:14:36,404 - utils.login_handler - INFO - 🌐 omarabailisd35t@outlook.com - Navigating to login page...
+2025-08-19 05:14:36,481 - utils.browser_manager - INFO - 🦊 Launched Camoufox browser with proxy: 250712La4qP-resi-US:049NOA7a4VNHoIM@ca.proxy-jet.io:1010
+2025-08-19 05:14:36,591 - utils.browser_manager - INFO - 🆕 Created fresh isolated context for 250712La4qP-resi-US:049NOA7a4VNHoIM@ca.proxy-jet.io:1010
+2025-08-19 05:14:37,390 - utils.screenshot_monitor - WARNING - 📸 Screenshot monitoring already running
+2025-08-19 05:14:37,391 - utils.login_handler - INFO - 🔐 exowinbot@icloud.com - Starting login process...
+2025-08-19 05:14:37,391 - utils.login_handler - INFO - 🌐 exowinbot@icloud.com - Navigating to login page...
+2025-08-19 05:14:39,111 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580476_omarabailisd35t_at_outlook_com_monitor_001_0s
+2025-08-19 05:14:39,111 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #1 (0s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580476_omarabailisd35t_at_outlook_com_monitor_001_0s
+2025-08-19 05:14:42,272 - utils.login_handler - INFO - 🛡️ exowinbot@icloud.com - CloudFlare challenge detected (status: 403), attempting to solve...
+2025-08-19 05:14:42,273 - utils.unified_turnstile_handler - INFO - 🔍 Starting enhanced Turnstile challenge detection...
+2025-08-19 05:14:42,273 - utils.unified_turnstile_handler - INFO - 🔍 Phase 1: Quick initial detection...
+2025-08-19 05:14:42,351 - utils.unified_turnstile_handler - INFO - 🔍 Phase 2: Waiting for dynamic Turnstile content...
+2025-08-19 05:14:43,064 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:14:43,697 - utils.login_handler - INFO - ✅ omarabailisd35t@outlook.com - Successfully navigated to login page
+2025-08-19 05:14:43,697 - utils.login_handler - INFO - 🔍 omarabailisd35t@outlook.com - [before_form_fill] Checking for Cloudflare challenges...
+2025-08-19 05:14:43,722 - utils.login_handler - INFO - ✅ omarabailisd35t@outlook.com - [before_form_fill] No challenges detected, continuing...
+2025-08-19 05:14:43,722 - utils.login_handler - INFO - 📝 omarabailisd35t@outlook.com - Filling login form...
+2025-08-19 05:14:43,722 - utils.login_handler - INFO - ⏳ omarabailisd35t@outlook.com - Waiting for CloudFlare challenge completion...
+2025-08-19 05:14:44,748 - utils.login_handler - INFO - ✅ omarabailisd35t@outlook.com - CloudFlare challenge completed after 1s
+2025-08-19 05:14:44,748 - utils.login_handler - INFO - ⏳ omarabailisd35t@outlook.com - Waiting for login form to appear...
+2025-08-19 05:14:45,752 - utils.login_handler - INFO - ✅ omarabailisd35t@outlook.com - Login page loaded (title: Sign in to Your Epic Games account | Epic Games)
+2025-08-19 05:14:45,752 - utils.login_handler - INFO - 📧 omarabailisd35t@outlook.com - Starting exact login sequence...
+2025-08-19 05:14:45,752 - utils.login_handler - INFO - 🔧 omarabailisd35t@outlook.com - Filling email via JavaScript...
+2025-08-19 05:14:45,781 - utils.login_handler - INFO - ✅ omarabailisd35t@outlook.com - Email filled successfully via JavaScript
+2025-08-19 05:14:45,781 - utils.login_handler - INFO - ➡️ omarabailisd35t@outlook.com - Clicking Continue button...
+2025-08-19 05:14:46,654 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580484_omarabailisd35t_at_outlook_com_monitor_002_7s
+2025-08-19 05:14:46,655 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #2 (7s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580484_omarabailisd35t_at_outlook_com_monitor_002_7s
+2025-08-19 05:14:49,206 - utils.unified_turnstile_handler - INFO - 🔄 Still searching for Turnstile... (6s elapsed)
+2025-08-19 05:14:49,211 - utils.unified_turnstile_handler - INFO -    Current URL: https://www.epicgames.com/id/login
+2025-08-19 05:14:49,211 - utils.unified_turnstile_handler - INFO -    Page title: Just a moment...
+2025-08-19 05:14:49,615 - utils.login_handler - INFO - ✅ omarabailisd35t@outlook.com - Continue button clicked
+2025-08-19 05:14:52,446 - utils.unified_turnstile_handler - INFO - 🎯 Detected: Challenge Element - sitekey: None, visible: True
+2025-08-19 05:14:52,446 - utils.unified_turnstile_handler - INFO - ✅ Found Turnstile challenge (extended) after 10s: Challenge Element
+2025-08-19 05:14:52,446 - utils.unified_turnstile_handler - INFO - 🔍 Using enhanced parameter extraction for detected challenge...
+2025-08-19 05:14:52,446 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive Turnstile parameter extraction...
+2025-08-19 05:14:52,475 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive sitekey extraction...
+2025-08-19 05:14:52,534 - utils.enhanced_sitekey_extractor - INFO - 🔍 Detected Cloudflare challenge page, extracting sitekey...
+2025-08-19 05:14:52,542 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ Could not extract sitekey from Cloudflare challenge page
+2025-08-19 05:14:52,616 - utils.login_handler - INFO - 🔒 omarabailisd35t@outlook.com - Filling password field...
+2025-08-19 05:14:52,666 - utils.login_handler - INFO - ✅ omarabailisd35t@outlook.com - Password field filled successfully
+2025-08-19 05:14:52,666 - utils.login_handler - INFO - 🚀 omarabailisd35t@outlook.com - Step 4: Clicking Sign in button...
+2025-08-19 05:14:53,181 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:14:53,186 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580491_omarabailisd35t_at_outlook_com_monitor_003_15s
+2025-08-19 05:14:53,186 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #3 (15s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580491_omarabailisd35t_at_outlook_com_monitor_003_15s
+2025-08-19 05:14:54,560 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No sitekey found with any method - challenge may not be solvable
+2025-08-19 05:14:54,561 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No Turnstile parameters found with any method
+2025-08-19 05:14:54,561 - utils.unified_turnstile_handler - WARNING - ⚠️ Enhanced detection could not extract sitekey
+2025-08-19 05:14:54,561 - utils.unified_turnstile_handler - INFO - 🔍 Extracting actual sitekey from current challenge...
+2025-08-19 05:14:54,561 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive sitekey extraction...
+2025-08-19 05:14:54,622 - utils.enhanced_sitekey_extractor - INFO - 🔍 Detected Cloudflare challenge page, extracting sitekey...
+2025-08-19 05:14:54,630 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ Could not extract sitekey from Cloudflare challenge page
+2025-08-19 05:14:56,474 - utils.login_handler - INFO - ✅ omarabailisd35t@outlook.com - Sign in button clicked with button:has-text("Sign in")
+2025-08-19 05:14:56,474 - utils.login_handler - INFO - 🛡️ omarabailisd35t@outlook.com - Monitoring for post-submission challenges...
+2025-08-19 05:14:56,650 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No sitekey found with any method - challenge may not be solvable
+2025-08-19 05:14:56,650 - utils.unified_turnstile_handler - WARNING - ⚠️ Could not extract sitekey from current challenge
+2025-08-19 05:14:58,117 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580496_turnstile_detected.png
+2025-08-19 05:14:58,118 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580496_turnstile_detected.png
+2025-08-19 05:14:58,118 - utils.unified_turnstile_handler - INFO - 🎯 Attempting to solve Turnstile/Cloudflare challenge...
+2025-08-19 05:14:58,118 - utils.unified_turnstile_handler - INFO -    Sitekey: Not found
+2025-08-19 05:14:58,118 - utils.unified_turnstile_handler - INFO - ℹ️ Fallback solvers disabled - using only primary Turnstile solver
+2025-08-19 05:14:58,118 - utils.unified_turnstile_handler - ERROR - ❌ All Turnstile solving methods failed. Attempted: 
+2025-08-19 05:14:59,980 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 188.5MB (+54.5MB), CPU: 2.8%
+2025-08-19 05:14:59,981 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580498_turnstile_failed.png
+2025-08-19 05:14:59,981 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580498_omarabailisd35t_at_outlook_com_monitor_004_21s
+2025-08-19 05:14:59,981 - utils.login_handler - INFO - 🔍 omarabailisd35t@outlook.com - COMPREHENSIVE CHALLENGE DETECTION STARTING...
+2025-08-19 05:14:59,981 - utils.login_handler - INFO - 🔍 omarabailisd35t@outlook.com - Challenge detection attempt 1/10
+2025-08-19 05:14:59,983 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580498_turnstile_failed.png
+2025-08-19 05:14:59,983 - utils.login_handler - INFO - ❌ exowinbot@icloud.com - Failed to solve CloudFlare challenge: All solving methods failed. Attempted: 
+2025-08-19 05:14:59,984 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #4 (21s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580498_omarabailisd35t_at_outlook_com_monitor_004_21s
+2025-08-19 05:14:59,986 - utils.login_handler - INFO - 🌐 omarabailisd35t@outlook.com - Current URL: https://www.epicgames.com/id/login
+2025-08-19 05:14:59,986 - utils.login_handler - INFO - 📄 omarabailisd35t@outlook.com - Page title: Sign in to Your Epic Games account | Epic Games
+2025-08-19 05:14:59,986 - utils.unified_turnstile_handler - INFO - 🔍 Starting enhanced Turnstile challenge detection...
+2025-08-19 05:14:59,986 - utils.unified_turnstile_handler - INFO - 🔍 Phase 1: Quick initial detection...
+2025-08-19 05:15:00,019 - utils.unified_turnstile_handler - INFO - 🔍 Phase 2: Waiting for dynamic Turnstile content...
+2025-08-19 05:15:01,380 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580500_exowinbot_at_icloud.com_navigate_error.png
+2025-08-19 05:15:01,380 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580500_exowinbot_at_icloud.com_navigate_error.png
+2025-08-19 05:15:01,380 - utils.account_checker - WARNING - ⚠️ exowinbot@icloud.com - Login failed, checking for challenges...
+2025-08-19 05:15:01,380 - utils.login_handler - INFO - 🔍 exowinbot@icloud.com - [login_failed] Checking for Cloudflare challenges...
+2025-08-19 05:15:01,385 - utils.login_handler - WARNING - 🛡️ exowinbot@icloud.com - [login_failed] CHALLENGE DETECTED! Stopping automated browser...
+2025-08-19 05:15:02,833 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580501_exowinbot_at_icloud.com_challenge_detected_login_failed.png
+2025-08-19 05:15:02,833 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580501_exowinbot_at_icloud.com_challenge_detected_login_failed.png
+2025-08-19 05:15:02,833 - utils.login_handler - INFO - 🔍 exowinbot@icloud.com - COMPREHENSIVE CHALLENGE DETECTION STARTING...
+2025-08-19 05:15:02,833 - utils.login_handler - INFO - 🔍 exowinbot@icloud.com - Challenge detection attempt 1/10
+2025-08-19 05:15:02,836 - utils.login_handler - INFO - 🌐 exowinbot@icloud.com - Current URL: https://www.epicgames.com/id/login
+2025-08-19 05:15:02,836 - utils.login_handler - INFO - 📄 exowinbot@icloud.com - Page title: Just a moment...
+2025-08-19 05:15:02,836 - utils.unified_turnstile_handler - INFO - 🔍 Starting enhanced Turnstile challenge detection...
+2025-08-19 05:15:02,836 - utils.unified_turnstile_handler - INFO - 🔍 Phase 1: Quick initial detection...
+2025-08-19 05:15:02,865 - utils.unified_turnstile_handler - INFO - 🔍 Phase 2: Waiting for dynamic Turnstile content...
+2025-08-19 05:15:03,303 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:15:06,196 - utils.unified_turnstile_handler - INFO - 🔄 Still searching for Turnstile... (6s elapsed)
+2025-08-19 05:15:06,200 - utils.unified_turnstile_handler - INFO -    Current URL: https://www.epicgames.com/id/login
+2025-08-19 05:15:06,200 - utils.unified_turnstile_handler - INFO -    Page title: Sign in to Your Epic Games account | Epic Games
+2025-08-19 05:15:06,569 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580504_omarabailisd35t_at_outlook_com_monitor_005_28s
+2025-08-19 05:15:06,569 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #5 (28s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580504_omarabailisd35t_at_outlook_com_monitor_005_28s
+2025-08-19 05:15:09,039 - utils.unified_turnstile_handler - INFO - 🔄 Still searching for Turnstile... (6s elapsed)
+2025-08-19 05:15:09,042 - utils.unified_turnstile_handler - INFO -    Current URL: https://www.epicgames.com/id/login
+2025-08-19 05:15:09,042 - utils.unified_turnstile_handler - INFO -    Page title: Just a moment...
+2025-08-19 05:15:10,409 - utils.unified_turnstile_handler - INFO - 🎯 Detected: Challenge Element - sitekey: None, visible: True
+2025-08-19 05:15:10,409 - utils.unified_turnstile_handler - INFO - ✅ Found Turnstile challenge (extended) after 10s: Challenge Element
+2025-08-19 05:15:10,409 - utils.unified_turnstile_handler - INFO - 🔍 Using enhanced parameter extraction for detected challenge...
+2025-08-19 05:15:10,409 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive Turnstile parameter extraction...
+2025-08-19 05:15:10,437 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive sitekey extraction...
+2025-08-19 05:15:12,537 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No sitekey found with any method - challenge may not be solvable
+2025-08-19 05:15:12,537 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No Turnstile parameters found with any method
+2025-08-19 05:15:12,537 - utils.unified_turnstile_handler - WARNING - ⚠️ Enhanced detection could not extract sitekey
+2025-08-19 05:15:12,537 - utils.login_handler - INFO - 🛡️ omarabailisd35t@outlook.com - TURNSTILE CHALLENGE DETECTED: Challenge Element
+2025-08-19 05:15:13,039 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580511_omarabailisd35t_at_outlook_com_monitor_006_35s
+2025-08-19 05:15:13,040 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #6 (35s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580511_omarabailisd35t_at_outlook_com_monitor_006_35s
+2025-08-19 05:15:13,227 - utils.unified_turnstile_handler - INFO - 🎯 Detected: Challenge Element - sitekey: None, visible: True
+2025-08-19 05:15:13,227 - utils.unified_turnstile_handler - INFO - ✅ Found Turnstile challenge (extended) after 10s: Challenge Element
+2025-08-19 05:15:13,227 - utils.unified_turnstile_handler - INFO - 🔍 Using enhanced parameter extraction for detected challenge...
+2025-08-19 05:15:13,227 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive Turnstile parameter extraction...
+2025-08-19 05:15:13,254 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive sitekey extraction...
+2025-08-19 05:15:13,314 - utils.enhanced_sitekey_extractor - INFO - 🔍 Detected Cloudflare challenge page, extracting sitekey...
+2025-08-19 05:15:13,321 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ Could not extract sitekey from Cloudflare challenge page
+2025-08-19 05:15:13,420 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:15:14,085 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580512_omarabailisd35t_at_outlook.com_turnstile_challenge.png
+2025-08-19 05:15:14,085 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580512_omarabailisd35t_at_outlook.com_turnstile_challenge.png
+2025-08-19 05:15:14,085 - utils.login_handler - INFO - 🎯 omarabailisd35t@outlook.com - Attempting to solve Turnstile challenge...
+2025-08-19 05:15:14,086 - utils.unified_turnstile_handler - INFO - 🔍 Starting enhanced Turnstile challenge detection...
+2025-08-19 05:15:14,086 - utils.unified_turnstile_handler - INFO - 🔍 Phase 1: Quick initial detection...
+2025-08-19 05:15:14,119 - utils.unified_turnstile_handler - INFO - 🔍 Phase 2: Waiting for dynamic Turnstile content...
+2025-08-19 05:15:15,344 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No sitekey found with any method - challenge may not be solvable
+2025-08-19 05:15:15,344 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No Turnstile parameters found with any method
+2025-08-19 05:15:15,344 - utils.unified_turnstile_handler - WARNING - ⚠️ Enhanced detection could not extract sitekey
+2025-08-19 05:15:15,344 - utils.login_handler - INFO - 🛡️ exowinbot@icloud.com - TURNSTILE CHALLENGE DETECTED: Challenge Element
+2025-08-19 05:15:16,784 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580515_exowinbot_at_icloud.com_turnstile_challenge.png
+2025-08-19 05:15:16,784 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580515_exowinbot_at_icloud.com_turnstile_challenge.png
+2025-08-19 05:15:16,784 - utils.login_handler - INFO - 🎯 exowinbot@icloud.com - Attempting to solve Turnstile challenge...
+2025-08-19 05:15:16,784 - utils.unified_turnstile_handler - INFO - 🔍 Starting enhanced Turnstile challenge detection...
+2025-08-19 05:15:16,784 - utils.unified_turnstile_handler - INFO - 🔍 Phase 1: Quick initial detection...
+2025-08-19 05:15:16,809 - utils.unified_turnstile_handler - INFO - 🔍 Phase 2: Waiting for dynamic Turnstile content...
+2025-08-19 05:15:19,577 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580518_omarabailisd35t_at_outlook_com_monitor_007_41s
+2025-08-19 05:15:19,577 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #7 (41s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580518_omarabailisd35t_at_outlook_com_monitor_007_41s
+2025-08-19 05:15:20,390 - utils.unified_turnstile_handler - INFO - 🔄 Still searching for Turnstile... (6s elapsed)
+2025-08-19 05:15:20,444 - utils.unified_turnstile_handler - INFO -    Current URL: https://www.epicgames.com/id/login
+2025-08-19 05:15:20,445 - utils.unified_turnstile_handler - INFO -    Page title: Sign in to Your Epic Games account | Epic Games
+2025-08-19 05:15:22,973 - utils.unified_turnstile_handler - INFO - 🔄 Still searching for Turnstile... (6s elapsed)
+2025-08-19 05:15:22,976 - utils.unified_turnstile_handler - INFO -    Current URL: https://www.epicgames.com/id/login
+2025-08-19 05:15:22,976 - utils.unified_turnstile_handler - INFO -    Page title: Just a moment...
+2025-08-19 05:15:23,537 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:15:25,077 - utils.unified_turnstile_handler - INFO - 🎯 Detected: Challenge Element - sitekey: None, visible: True
+2025-08-19 05:15:25,077 - utils.unified_turnstile_handler - INFO - ✅ Found Turnstile challenge (extended) after 10s: Challenge Element
+2025-08-19 05:15:25,077 - utils.unified_turnstile_handler - INFO - 🔍 Using enhanced parameter extraction for detected challenge...
+2025-08-19 05:15:25,077 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive Turnstile parameter extraction...
+2025-08-19 05:15:25,107 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive sitekey extraction...
+2025-08-19 05:15:27,181 - utils.unified_turnstile_handler - INFO - 🎯 Detected: Challenge Element - sitekey: None, visible: True
+2025-08-19 05:15:27,181 - utils.unified_turnstile_handler - INFO - ✅ Found Turnstile challenge (extended) after 10s: Challenge Element
+2025-08-19 05:15:27,181 - utils.unified_turnstile_handler - INFO - 🔍 Using enhanced parameter extraction for detected challenge...
+2025-08-19 05:15:27,181 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive Turnstile parameter extraction...
+2025-08-19 05:15:27,212 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive sitekey extraction...
+2025-08-19 05:15:27,217 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No sitekey found with any method - challenge may not be solvable
+2025-08-19 05:15:27,217 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No Turnstile parameters found with any method
+2025-08-19 05:15:27,217 - utils.unified_turnstile_handler - WARNING - ⚠️ Enhanced detection could not extract sitekey
+2025-08-19 05:15:27,217 - utils.unified_turnstile_handler - INFO - 🔍 Extracting actual sitekey from current challenge...
+2025-08-19 05:15:27,217 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive sitekey extraction...
+2025-08-19 05:15:27,282 - utils.enhanced_sitekey_extractor - INFO - 🔍 Detected Cloudflare challenge page, extracting sitekey...
+2025-08-19 05:15:27,296 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ Could not extract sitekey from Cloudflare challenge page
+2025-08-19 05:15:29,321 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No sitekey found with any method - challenge may not be solvable
+2025-08-19 05:15:29,321 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No Turnstile parameters found with any method
+2025-08-19 05:15:29,321 - utils.unified_turnstile_handler - WARNING - ⚠️ Enhanced detection could not extract sitekey
+2025-08-19 05:15:29,321 - utils.unified_turnstile_handler - INFO - 🔍 Extracting actual sitekey from current challenge...
+2025-08-19 05:15:29,321 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive sitekey extraction...
+2025-08-19 05:15:29,358 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No sitekey found with any method - challenge may not be solvable
+2025-08-19 05:15:29,358 - utils.unified_turnstile_handler - WARNING - ⚠️ Could not extract sitekey from current challenge
+2025-08-19 05:15:29,381 - utils.enhanced_sitekey_extractor - INFO - 🔍 Detected Cloudflare challenge page, extracting sitekey...
+2025-08-19 05:15:29,389 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ Could not extract sitekey from Cloudflare challenge page
+2025-08-19 05:15:30,982 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 190.7MB (+56.6MB), CPU: 3.5%
+2025-08-19 05:15:31,109 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580524_omarabailisd35t_at_outlook_com_monitor_008_48s
+2025-08-19 05:15:31,109 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #8 (48s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580524_omarabailisd35t_at_outlook_com_monitor_008_48s
+2025-08-19 05:15:31,407 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No sitekey found with any method - challenge may not be solvable
+2025-08-19 05:15:31,407 - utils.unified_turnstile_handler - WARNING - ⚠️ Could not extract sitekey from current challenge
+2025-08-19 05:15:31,764 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580529_turnstile_detected.png
+2025-08-19 05:15:31,764 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580529_turnstile_detected.png
+2025-08-19 05:15:31,764 - utils.unified_turnstile_handler - INFO - 🎯 Attempting to solve Turnstile/Cloudflare challenge...
+2025-08-19 05:15:31,764 - utils.unified_turnstile_handler - INFO -    Sitekey: Not found
+2025-08-19 05:15:31,764 - utils.unified_turnstile_handler - INFO - ℹ️ Fallback solvers disabled - using only primary Turnstile solver
+2025-08-19 05:15:31,764 - utils.unified_turnstile_handler - ERROR - ❌ All Turnstile solving methods failed. Attempted: 
+2025-08-19 05:15:32,798 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580531_turnstile_detected.png
+2025-08-19 05:15:32,798 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580531_turnstile_detected.png
+2025-08-19 05:15:32,798 - utils.unified_turnstile_handler - INFO - 🎯 Attempting to solve Turnstile/Cloudflare challenge...
+2025-08-19 05:15:32,798 - utils.unified_turnstile_handler - INFO -    Sitekey: Not found
+2025-08-19 05:15:32,798 - utils.unified_turnstile_handler - INFO - ℹ️ Fallback solvers disabled - using only primary Turnstile solver
+2025-08-19 05:15:32,798 - utils.unified_turnstile_handler - ERROR - ❌ All Turnstile solving methods failed. Attempted: 
+2025-08-19 05:15:33,224 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580531_turnstile_failed.png
+2025-08-19 05:15:33,224 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580531_turnstile_failed.png
+2025-08-19 05:15:33,224 - utils.login_handler - INFO - 🖱️ omarabailisd35t@outlook.com - Attempting manual challenge interaction...
+2025-08-19 05:15:33,516 - utils.login_handler - INFO - ⚠️ omarabailisd35t@outlook.com - Manual challenge interaction did not resolve challenge
+2025-08-19 05:15:33,516 - utils.login_handler - INFO - ⏳ omarabailisd35t@outlook.com - Waiting for Turnstile to auto-resolve...
+2025-08-19 05:15:33,658 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:15:34,142 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580532_turnstile_failed.png
+2025-08-19 05:15:34,143 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580532_turnstile_failed.png
+2025-08-19 05:15:34,143 - utils.login_handler - INFO - 🖱️ exowinbot@icloud.com - Attempting manual challenge interaction...
+2025-08-19 05:15:34,161 - utils.login_handler - INFO - ⚠️ exowinbot@icloud.com - Manual challenge interaction did not resolve challenge
+2025-08-19 05:15:34,161 - utils.login_handler - INFO - ⏳ exowinbot@icloud.com - Waiting for Turnstile to auto-resolve...
+2025-08-19 05:15:37,569 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580536_omarabailisd35t_at_outlook_com_monitor_009_59s
+2025-08-19 05:15:37,570 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #9 (59s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580536_omarabailisd35t_at_outlook_com_monitor_009_59s
+2025-08-19 05:15:43,516 - utils.unified_turnstile_handler - INFO - 🔍 Starting enhanced Turnstile challenge detection...
+2025-08-19 05:15:43,516 - utils.unified_turnstile_handler - INFO - 🔍 Phase 1: Quick initial detection...
+2025-08-19 05:15:43,550 - utils.unified_turnstile_handler - INFO - 🔍 Phase 2: Waiting for dynamic Turnstile content...
+2025-08-19 05:15:43,780 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:15:43,872 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580542_omarabailisd35t_at_outlook_com_monitor_010_66s
+2025-08-19 05:15:43,872 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #10 (66s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580542_omarabailisd35t_at_outlook_com_monitor_010_66s
+2025-08-19 05:15:44,162 - utils.unified_turnstile_handler - INFO - 🔍 Starting enhanced Turnstile challenge detection...
+2025-08-19 05:15:44,162 - utils.unified_turnstile_handler - INFO - 🔍 Phase 1: Quick initial detection...
+2025-08-19 05:15:44,186 - utils.unified_turnstile_handler - INFO - 🔍 Phase 2: Waiting for dynamic Turnstile content...
+2025-08-19 05:15:49,991 - utils.unified_turnstile_handler - INFO - 🔄 Still searching for Turnstile... (6s elapsed)
+2025-08-19 05:15:49,995 - utils.unified_turnstile_handler - INFO -    Current URL: https://www.epicgames.com/id/login
+2025-08-19 05:15:49,996 - utils.unified_turnstile_handler - INFO -    Page title: Sign in to Your Epic Games account | Epic Games
+2025-08-19 05:15:50,261 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580548_omarabailisd35t_at_outlook_com_monitor_011_72s
+2025-08-19 05:15:50,262 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #11 (72s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580548_omarabailisd35t_at_outlook_com_monitor_011_72s
+2025-08-19 05:15:50,353 - utils.unified_turnstile_handler - INFO - 🔄 Still searching for Turnstile... (6s elapsed)
+2025-08-19 05:15:50,356 - utils.unified_turnstile_handler - INFO -    Current URL: https://www.epicgames.com/id/login
+2025-08-19 05:15:50,356 - utils.unified_turnstile_handler - INFO -    Page title: Just a moment...
+2025-08-19 05:15:53,906 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:15:54,219 - utils.unified_turnstile_handler - INFO - 🎯 Detected: Challenge Element - sitekey: None, visible: True
+2025-08-19 05:15:54,219 - utils.unified_turnstile_handler - INFO - ✅ Found Turnstile challenge (extended) after 10s: Challenge Element
+2025-08-19 05:15:54,219 - utils.unified_turnstile_handler - INFO - 🔍 Using enhanced parameter extraction for detected challenge...
+2025-08-19 05:15:54,219 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive Turnstile parameter extraction...
+2025-08-19 05:15:54,248 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive sitekey extraction...
+2025-08-19 05:15:54,559 - utils.unified_turnstile_handler - INFO - 🎯 Detected: Challenge Element - sitekey: None, visible: True
+2025-08-19 05:15:54,559 - utils.unified_turnstile_handler - INFO - ✅ Found Turnstile challenge (extended) after 10s: Challenge Element
+2025-08-19 05:15:54,560 - utils.unified_turnstile_handler - INFO - 🔍 Using enhanced parameter extraction for detected challenge...
+2025-08-19 05:15:54,560 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive Turnstile parameter extraction...
+2025-08-19 05:15:54,585 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive sitekey extraction...
+2025-08-19 05:15:54,641 - utils.enhanced_sitekey_extractor - INFO - 🔍 Detected Cloudflare challenge page, extracting sitekey...
+2025-08-19 05:15:54,649 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ Could not extract sitekey from Cloudflare challenge page
+2025-08-19 05:15:56,344 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No sitekey found with any method - challenge may not be solvable
+2025-08-19 05:15:56,344 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No Turnstile parameters found with any method
+2025-08-19 05:15:56,344 - utils.unified_turnstile_handler - WARNING - ⚠️ Enhanced detection could not extract sitekey
+2025-08-19 05:15:56,348 - utils.login_handler - INFO - 🛡️ omarabailisd35t@outlook.com - Challenge detected in page content, waiting...
+2025-08-19 05:15:56,665 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No sitekey found with any method - challenge may not be solvable
+2025-08-19 05:15:56,665 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No Turnstile parameters found with any method
+2025-08-19 05:15:56,665 - utils.unified_turnstile_handler - WARNING - ⚠️ Enhanced detection could not extract sitekey
+2025-08-19 05:15:56,668 - utils.login_handler - INFO - 🛡️ exowinbot@icloud.com - Challenge detected in page content, waiting...
+2025-08-19 05:15:56,879 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580555_omarabailisd35t_at_outlook_com_monitor_012_78s
+2025-08-19 05:15:56,880 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #12 (78s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580555_omarabailisd35t_at_outlook_com_monitor_012_78s
+2025-08-19 05:16:01,983 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 192.2MB (+58.1MB), CPU: 2.1%
+2025-08-19 05:16:01,984 - utils.login_handler - INFO - 🔍 omarabailisd35t@outlook.com - Challenge detection attempt 2/10
+2025-08-19 05:16:01,985 - utils.login_handler - INFO - 🔍 exowinbot@icloud.com - Challenge detection attempt 2/10
+2025-08-19 05:16:01,991 - utils.login_handler - INFO - 🌐 exowinbot@icloud.com - Current URL: https://www.epicgames.com/id/login
+2025-08-19 05:16:01,991 - utils.login_handler - INFO - 📄 exowinbot@icloud.com - Page title: Just a moment...
+2025-08-19 05:16:01,991 - utils.unified_turnstile_handler - INFO - 🔍 Starting enhanced Turnstile challenge detection...
+2025-08-19 05:16:01,991 - utils.unified_turnstile_handler - INFO - 🔍 Phase 1: Quick initial detection...
+2025-08-19 05:16:01,994 - utils.login_handler - INFO - 🌐 omarabailisd35t@outlook.com - Current URL: https://www.epicgames.com/id/login
+2025-08-19 05:16:01,994 - utils.login_handler - INFO - 📄 omarabailisd35t@outlook.com - Page title: Sign in to Your Epic Games account | Epic Games
+2025-08-19 05:16:01,994 - utils.unified_turnstile_handler - INFO - 🔍 Starting enhanced Turnstile challenge detection...
+2025-08-19 05:16:01,994 - utils.unified_turnstile_handler - INFO - 🔍 Phase 1: Quick initial detection...
+2025-08-19 05:16:02,022 - utils.unified_turnstile_handler - INFO - 🔍 Phase 2: Waiting for dynamic Turnstile content...
+2025-08-19 05:16:02,062 - utils.unified_turnstile_handler - INFO - 🔍 Phase 2: Waiting for dynamic Turnstile content...
+2025-08-19 05:16:03,448 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580561_omarabailisd35t_at_outlook_com_monitor_013_85s
+2025-08-19 05:16:03,448 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #13 (85s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580561_omarabailisd35t_at_outlook_com_monitor_013_85s
+2025-08-19 05:16:04,026 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:16:08,190 - utils.unified_turnstile_handler - INFO - 🔄 Still searching for Turnstile... (6s elapsed)
+2025-08-19 05:16:08,193 - utils.unified_turnstile_handler - INFO -    Current URL: https://www.epicgames.com/id/login
+2025-08-19 05:16:08,193 - utils.unified_turnstile_handler - INFO -    Page title: Just a moment...
+2025-08-19 05:16:08,506 - utils.unified_turnstile_handler - INFO - 🔄 Still searching for Turnstile... (6s elapsed)
+2025-08-19 05:16:08,509 - utils.unified_turnstile_handler - INFO -    Current URL: https://www.epicgames.com/id/login
+2025-08-19 05:16:08,509 - utils.unified_turnstile_handler - INFO -    Page title: Sign in to Your Epic Games account | Epic Games
+2025-08-19 05:16:09,840 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580568_omarabailisd35t_at_outlook_com_monitor_014_92s
+2025-08-19 05:16:09,841 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #14 (92s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580568_omarabailisd35t_at_outlook_com_monitor_014_92s
+2025-08-19 05:16:12,408 - utils.unified_turnstile_handler - INFO - 🎯 Detected: Challenge Element - sitekey: None, visible: True
+2025-08-19 05:16:12,408 - utils.unified_turnstile_handler - INFO - ✅ Found Turnstile challenge (extended) after 10s: Challenge Element
+2025-08-19 05:16:12,408 - utils.unified_turnstile_handler - INFO - 🔍 Using enhanced parameter extraction for detected challenge...
+2025-08-19 05:16:12,408 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive Turnstile parameter extraction...
+2025-08-19 05:16:12,442 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive sitekey extraction...
+2025-08-19 05:16:12,522 - utils.enhanced_sitekey_extractor - INFO - 🔍 Detected Cloudflare challenge page, extracting sitekey...
+2025-08-19 05:16:12,531 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ Could not extract sitekey from Cloudflare challenge page
+2025-08-19 05:16:12,725 - utils.unified_turnstile_handler - INFO - 🎯 Detected: Challenge Element - sitekey: None, visible: True
+2025-08-19 05:16:12,725 - utils.unified_turnstile_handler - INFO - ✅ Found Turnstile challenge (extended) after 10s: Challenge Element
+2025-08-19 05:16:12,725 - utils.unified_turnstile_handler - INFO - 🔍 Using enhanced parameter extraction for detected challenge...
+2025-08-19 05:16:12,725 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive Turnstile parameter extraction...
+2025-08-19 05:16:12,760 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive sitekey extraction...
+2025-08-19 05:16:14,142 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:16:14,551 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No sitekey found with any method - challenge may not be solvable
+2025-08-19 05:16:14,551 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No Turnstile parameters found with any method
+2025-08-19 05:16:14,551 - utils.unified_turnstile_handler - WARNING - ⚠️ Enhanced detection could not extract sitekey
+2025-08-19 05:16:14,551 - utils.login_handler - INFO - 🛡️ exowinbot@icloud.com - TURNSTILE CHALLENGE DETECTED: Challenge Element
+2025-08-19 05:16:14,899 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No sitekey found with any method - challenge may not be solvable
+2025-08-19 05:16:14,900 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No Turnstile parameters found with any method
+2025-08-19 05:16:14,900 - utils.unified_turnstile_handler - WARNING - ⚠️ Enhanced detection could not extract sitekey
+2025-08-19 05:16:14,900 - utils.login_handler - INFO - 🛡️ omarabailisd35t@outlook.com - TURNSTILE CHALLENGE DETECTED: Challenge Element
+2025-08-19 05:16:15,981 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580574_exowinbot_at_icloud.com_turnstile_challenge.png
+2025-08-19 05:16:15,981 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580574_exowinbot_at_icloud.com_turnstile_challenge.png
+2025-08-19 05:16:15,981 - utils.login_handler - INFO - 🎯 exowinbot@icloud.com - Attempting to solve Turnstile challenge...
+2025-08-19 05:16:15,981 - utils.unified_turnstile_handler - INFO - 🔍 Starting enhanced Turnstile challenge detection...
+2025-08-19 05:16:15,981 - utils.unified_turnstile_handler - INFO - 🔍 Phase 1: Quick initial detection...
+2025-08-19 05:16:16,010 - utils.unified_turnstile_handler - INFO - 🔍 Phase 2: Waiting for dynamic Turnstile content...
+2025-08-19 05:16:16,341 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580574_omarabailisd35t_at_outlook_com_monitor_015_98s
+2025-08-19 05:16:16,341 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #15 (98s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580574_omarabailisd35t_at_outlook_com_monitor_015_98s
+2025-08-19 05:16:17,074 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580574_omarabailisd35t_at_outlook.com_turnstile_challenge.png
+2025-08-19 05:16:17,074 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580574_omarabailisd35t_at_outlook.com_turnstile_challenge.png
+2025-08-19 05:16:17,075 - utils.login_handler - INFO - 🎯 omarabailisd35t@outlook.com - Attempting to solve Turnstile challenge...
+2025-08-19 05:16:17,075 - utils.unified_turnstile_handler - INFO - 🔍 Starting enhanced Turnstile challenge detection...
+2025-08-19 05:16:17,075 - utils.unified_turnstile_handler - INFO - 🔍 Phase 1: Quick initial detection...
+2025-08-19 05:16:17,105 - utils.unified_turnstile_handler - INFO - 🔍 Phase 2: Waiting for dynamic Turnstile content...
+2025-08-19 05:16:22,181 - utils.unified_turnstile_handler - INFO - 🔄 Still searching for Turnstile... (6s elapsed)
+2025-08-19 05:16:22,185 - utils.unified_turnstile_handler - INFO -    Current URL: https://www.epicgames.com/id/login
+2025-08-19 05:16:22,185 - utils.unified_turnstile_handler - INFO -    Page title: Just a moment...
+2025-08-19 05:16:22,672 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580581_omarabailisd35t_at_outlook_com_monitor_016_104s
+2025-08-19 05:16:22,673 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #16 (104s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580581_omarabailisd35t_at_outlook_com_monitor_016_104s
+2025-08-19 05:16:23,645 - utils.unified_turnstile_handler - INFO - 🔄 Still searching for Turnstile... (6s elapsed)
+2025-08-19 05:16:23,648 - utils.unified_turnstile_handler - INFO -    Current URL: https://www.epicgames.com/id/login
+2025-08-19 05:16:23,648 - utils.unified_turnstile_handler - INFO -    Page title: Sign in to Your Epic Games account | Epic Games
+2025-08-19 05:16:24,264 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:16:26,397 - utils.unified_turnstile_handler - INFO - 🎯 Detected: Challenge Element - sitekey: None, visible: True
+2025-08-19 05:16:26,397 - utils.unified_turnstile_handler - INFO - ✅ Found Turnstile challenge (extended) after 10s: Challenge Element
+2025-08-19 05:16:26,397 - utils.unified_turnstile_handler - INFO - 🔍 Using enhanced parameter extraction for detected challenge...
+2025-08-19 05:16:26,397 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive Turnstile parameter extraction...
+2025-08-19 05:16:26,427 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive sitekey extraction...
+2025-08-19 05:16:26,494 - utils.enhanced_sitekey_extractor - INFO - 🔍 Detected Cloudflare challenge page, extracting sitekey...
+2025-08-19 05:16:26,504 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ Could not extract sitekey from Cloudflare challenge page
+2025-08-19 05:16:27,882 - utils.unified_turnstile_handler - INFO - 🎯 Detected: Challenge Element - sitekey: None, visible: True
+2025-08-19 05:16:27,882 - utils.unified_turnstile_handler - INFO - ✅ Found Turnstile challenge (extended) after 10s: Challenge Element
+2025-08-19 05:16:27,882 - utils.unified_turnstile_handler - INFO - 🔍 Using enhanced parameter extraction for detected challenge...
+2025-08-19 05:16:27,882 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive Turnstile parameter extraction...
+2025-08-19 05:16:27,921 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive sitekey extraction...
+2025-08-19 05:16:28,521 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No sitekey found with any method - challenge may not be solvable
+2025-08-19 05:16:28,521 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No Turnstile parameters found with any method
+2025-08-19 05:16:28,521 - utils.unified_turnstile_handler - WARNING - ⚠️ Enhanced detection could not extract sitekey
+2025-08-19 05:16:28,521 - utils.unified_turnstile_handler - INFO - 🔍 Extracting actual sitekey from current challenge...
+2025-08-19 05:16:28,521 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive sitekey extraction...
+2025-08-19 05:16:28,611 - utils.enhanced_sitekey_extractor - INFO - 🔍 Detected Cloudflare challenge page, extracting sitekey...
+2025-08-19 05:16:28,621 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ Could not extract sitekey from Cloudflare challenge page
+2025-08-19 05:16:29,040 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580587_omarabailisd35t_at_outlook_com_monitor_017_111s
+2025-08-19 05:16:29,040 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #17 (111s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580587_omarabailisd35t_at_outlook_com_monitor_017_111s
+2025-08-19 05:16:30,132 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No sitekey found with any method - challenge may not be solvable
+2025-08-19 05:16:30,133 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No Turnstile parameters found with any method
+2025-08-19 05:16:30,133 - utils.unified_turnstile_handler - WARNING - ⚠️ Enhanced detection could not extract sitekey
+2025-08-19 05:16:30,133 - utils.unified_turnstile_handler - INFO - 🔍 Extracting actual sitekey from current challenge...
+2025-08-19 05:16:30,133 - utils.enhanced_sitekey_extractor - INFO - 🔍 Starting comprehensive sitekey extraction...
+2025-08-19 05:16:30,640 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No sitekey found with any method - challenge may not be solvable
+2025-08-19 05:16:30,640 - utils.unified_turnstile_handler - WARNING - ⚠️ Could not extract sitekey from current challenge
+2025-08-19 05:16:32,986 - utils.resource_monitor - INFO - 📊 Resource check: Memory: 194.9MB (+60.9MB), CPU: 3.9%
+2025-08-19 05:16:32,986 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580590_turnstile_detected.png
+2025-08-19 05:16:32,988 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580590_turnstile_detected.png
+2025-08-19 05:16:32,988 - utils.unified_turnstile_handler - INFO - 🎯 Attempting to solve Turnstile/Cloudflare challenge...
+2025-08-19 05:16:32,988 - utils.unified_turnstile_handler - INFO -    Sitekey: Not found
+2025-08-19 05:16:32,988 - utils.unified_turnstile_handler - INFO - ℹ️ Fallback solvers disabled - using only primary Turnstile solver
+2025-08-19 05:16:32,988 - utils.unified_turnstile_handler - ERROR - ❌ All Turnstile solving methods failed. Attempted: 
+2025-08-19 05:16:32,993 - utils.enhanced_sitekey_extractor - WARNING - ⚠️ No sitekey found with any method - challenge may not be solvable
+2025-08-19 05:16:32,993 - utils.unified_turnstile_handler - WARNING - ⚠️ Could not extract sitekey from current challenge
+2025-08-19 05:16:34,218 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580593_turnstile_failed.png
+2025-08-19 05:16:34,218 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580593_turnstile_failed.png
+2025-08-19 05:16:34,218 - utils.login_handler - INFO - 🖱️ exowinbot@icloud.com - Attempting manual challenge interaction...
+2025-08-19 05:16:34,237 - utils.login_handler - INFO - ⚠️ exowinbot@icloud.com - Manual challenge interaction did not resolve challenge
+2025-08-19 05:16:34,237 - utils.login_handler - INFO - ⏳ exowinbot@icloud.com - Waiting for Turnstile to auto-resolve...
+2025-08-19 05:16:34,379 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:16:34,755 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580593_turnstile_detected.png
+2025-08-19 05:16:34,756 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580593_turnstile_detected.png
+2025-08-19 05:16:34,756 - utils.unified_turnstile_handler - INFO - 🎯 Attempting to solve Turnstile/Cloudflare challenge...
+2025-08-19 05:16:34,756 - utils.unified_turnstile_handler - INFO -    Sitekey: Not found
+2025-08-19 05:16:34,756 - utils.unified_turnstile_handler - INFO - ℹ️ Fallback solvers disabled - using only primary Turnstile solver
+2025-08-19 05:16:34,756 - utils.unified_turnstile_handler - ERROR - ❌ All Turnstile solving methods failed. Attempted: 
+2025-08-19 05:16:35,421 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580594_omarabailisd35t_at_outlook_com_monitor_018_117s
+2025-08-19 05:16:35,422 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #18 (117s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580594_omarabailisd35t_at_outlook_com_monitor_018_117s
+2025-08-19 05:16:36,202 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580594_turnstile_failed.png
+2025-08-19 05:16:36,203 - utils.unified_turnstile_handler - INFO - 📸 Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/successful_login_1755580594_turnstile_failed.png
+2025-08-19 05:16:36,203 - utils.login_handler - INFO - 🖱️ omarabailisd35t@outlook.com - Attempting manual challenge interaction...
+2025-08-19 05:16:36,222 - utils.login_handler - INFO - ⚠️ omarabailisd35t@outlook.com - Manual challenge interaction did not resolve challenge
+2025-08-19 05:16:36,222 - utils.login_handler - INFO - ⏳ omarabailisd35t@outlook.com - Waiting for Turnstile to auto-resolve...
+2025-08-19 05:16:41,950 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580600_omarabailisd35t_at_outlook_com_monitor_019_124s
+2025-08-19 05:16:41,951 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #19 (124s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580600_omarabailisd35t_at_outlook_com_monitor_019_124s
+2025-08-19 05:16:44,238 - utils.unified_turnstile_handler - INFO - 🔍 Starting enhanced Turnstile challenge detection...
+2025-08-19 05:16:44,238 - utils.unified_turnstile_handler - INFO - 🔍 Phase 1: Quick initial detection...
+2025-08-19 05:16:44,260 - utils.unified_turnstile_handler - INFO - 🔍 Phase 2: Waiting for dynamic Turnstile content...
+2025-08-19 05:16:44,496 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8243582019:AAF85xHJQIiOXi9q21f65GyKQKHOqfn29h4/getUpdates "HTTP/1.1 200 OK"
+2025-08-19 05:16:46,223 - utils.unified_turnstile_handler - INFO - 🔍 Starting enhanced Turnstile challenge detection...
+2025-08-19 05:16:46,223 - utils.unified_turnstile_handler - INFO - 🔍 Phase 1: Quick initial detection...
+2025-08-19 05:16:46,524 - utils.unified_turnstile_handler - INFO - 🔍 Phase 2: Waiting for dynamic Turnstile content...
+2025-08-19 05:16:48,280 - utils.dropbox_uploader - INFO - Screenshot uploaded to Dropbox: /ExoMassChecker/screenshots/2025-08-19/account_check_1755580606_omarabailisd35t_at_outlook_com_monitor_020_130s
+2025-08-19 05:16:48,280 - utils.screenshot_monitor - INFO - 📸 omarabailisd35t@outlook.com - Monitor screenshot #20 (130s): /ExoMassChecker/screenshots/2025-08-19/account_check_1755580606_omarabailisd35t_at_outlook_com_monitor_020_130s
+2025-08-19 05:16:50,448 - utils.unified_turnstile_handler - INFO - 🔄 Still searching for Turnstile... (6s elapsed)
+2025-08-19 05:16:50,450 - utils.unified_turnstile_handler - INFO -    Current URL: https://www.epicgames.com/id/login
+2025-08-19 05:16:50,451 - utils.unified_turnstile_handler - INFO -    Page title: Just a moment...

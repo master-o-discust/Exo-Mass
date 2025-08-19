@@ -514,6 +514,218 @@ class BrowserManager:
                     onmessage: null
                 })
             });
+
+            // PROACTIVE SITEKEY EXTRACTION - Capture sitekeys as they appear
+            window._capturedTurnstileData = {
+                sitekeys: new Set(),
+                parameters: {},
+                widgets: [],
+                scripts: []
+            };
+
+            // Monitor DOM mutations for Turnstile elements
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    mutation.addedNodes.forEach((node) => {
+                        if (node.nodeType === 1) { // Element node
+                            // Check the added element itself
+                            checkElementForTurnstile(node);
+                            // Check all descendants
+                            const descendants = node.querySelectorAll ? node.querySelectorAll('*') : [];
+                            descendants.forEach(checkElementForTurnstile);
+                        }
+                    });
+                });
+            });
+
+            function checkElementForTurnstile(element) {
+                if (!element.getAttribute) return;
+                
+                // Check for sitekey attributes
+                const sitekeyAttrs = ['data-sitekey', 'data-cf-turnstile-sitekey', 'data-turnstile-sitekey', 'sitekey'];
+                sitekeyAttrs.forEach(attr => {
+                    const value = element.getAttribute(attr);
+                    if (value && value.length > 10) {
+                        window._capturedTurnstileData.sitekeys.add(value);
+                        window._capturedTurnstileData.parameters[value] = {
+                            sitekey: value,
+                            action: element.getAttribute('data-action'),
+                            cdata: element.getAttribute('data-cdata'),
+                            pagedata: element.getAttribute('data-chl-page-data'),
+                            element: element.tagName + (element.className ? '.' + element.className : '')
+                        };
+                    }
+                });
+
+                // Check for Turnstile widgets
+                if (element.classList && (element.classList.contains('cf-turnstile') || element.classList.contains('turnstile-widget'))) {
+                    window._capturedTurnstileData.widgets.push({
+                        element: element,
+                        attributes: Array.from(element.attributes).reduce((acc, attr) => {
+                            acc[attr.name] = attr.value;
+                            return acc;
+                        }, {})
+                    });
+                }
+            }
+
+            // Start observing immediately
+            if (document.body) {
+                observer.observe(document.body, { childList: true, subtree: true });
+            } else {
+                document.addEventListener('DOMContentLoaded', () => {
+                    observer.observe(document.body, { childList: true, subtree: true });
+                });
+            }
+
+            // Monitor script additions for Turnstile configuration
+            const originalAppendChild = Element.prototype.appendChild;
+            Element.prototype.appendChild = function(child) {
+                if (child.tagName === 'SCRIPT') {
+                    const content = child.textContent || child.innerHTML;
+                    if (content && (content.includes('turnstile') || content.includes('cf-turnstile') || content.includes('sitekey'))) {
+                        window._capturedTurnstileData.scripts.push({
+                            content: content,
+                            src: child.src || null,
+                            timestamp: Date.now()
+                        });
+                        
+                        // Extract sitekeys from script content
+                        const sitekeyPatterns = [
+                            /sitekey['"\\s]*[:=]['"\\s]*([0-9a-zA-Z_-]{10,})/g,
+                            /"sitekey"\\s*:\\s*"([^"]+)"/g,
+                            /'sitekey'\\s*:\\s*'([^']+)'/g
+                        ];
+                        
+                        sitekeyPatterns.forEach(pattern => {
+                            let match;
+                            while ((match = pattern.exec(content)) !== null) {
+                                if (match[1] && match[1].length > 10) {
+                                    window._capturedTurnstileData.sitekeys.add(match[1]);
+                                }
+                            }
+                        });
+                    }
+                }
+                return originalAppendChild.call(this, child);
+            };
+
+            // Monitor window object changes for Turnstile variables
+            const checkWindowVars = () => {
+                // Check for Turnstile configuration
+                if (window.turnstile) {
+                    if (window.turnstile.sitekey) {
+                        window._capturedTurnstileData.sitekeys.add(window.turnstile.sitekey);
+                    }
+                    if (window.turnstile._widgets) {
+                        Object.values(window.turnstile._widgets).forEach(widget => {
+                            if (widget.sitekey) {
+                                window._capturedTurnstileData.sitekeys.add(widget.sitekey);
+                            }
+                        });
+                    }
+                }
+
+                // Check for Cloudflare configuration
+                if (window.cf && window.cf.sitekey) {
+                    window._capturedTurnstileData.sitekeys.add(window.cf.sitekey);
+                }
+
+                // Check for Cloudflare challenge options
+                if (window._cf_chl_opt) {
+                    ['sitekey', 'cSitekey', 'turnstileSitekey'].forEach(key => {
+                        if (window._cf_chl_opt[key]) {
+                            window._capturedTurnstileData.sitekeys.add(window._cf_chl_opt[key]);
+                        }
+                    });
+                }
+            };
+
+            // Check window variables periodically
+            setInterval(checkWindowVars, 500);
+            
+            // Check immediately if DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', checkWindowVars);
+            } else {
+                checkWindowVars();
+            }
+
+            console.log('🔍 Proactive Turnstile sitekey extraction initialized');
+
+            // CRITICAL: 2captcha-required JavaScript injection for Cloudflare Challenge pages
+            // This intercepts turnstile.render calls to capture cData, chlPageData, and action
+            const turnstileInterceptor = setInterval(() => {
+                if (window.turnstile) {
+                    clearInterval(turnstileInterceptor);
+                    
+                    // Store original render function
+                    const originalRender = window.turnstile.render;
+                    
+                    // Override turnstile.render to capture parameters
+                    window.turnstile.render = function(container, params) {
+                        console.log('🎯 Turnstile render intercepted!');
+                        
+                        // Capture all parameters for 2captcha API
+                        const capturedParams = {
+                            type: "TurnstileTaskProxyless",
+                            websiteKey: params.sitekey,
+                            websiteURL: window.location.href,
+                            data: params.cData,
+                            pagedata: params.chlPageData,
+                            action: params.action,
+                            userAgent: navigator.userAgent
+                        };
+                        
+                        // Store parameters globally for extraction
+                        window._capturedTurnstileData.challengeParams = capturedParams;
+                        window._capturedTurnstileData.sitekeys.add(params.sitekey);
+                        window._capturedTurnstileData.parameters[params.sitekey] = {
+                            sitekey: params.sitekey,
+                            action: params.action,
+                            cdata: params.cData,
+                            pagedata: params.chlPageData,
+                            source: 'render_intercept'
+                        };
+                        
+                        // Store callback for later use
+                        if (params.callback) {
+                            window.tsCallback = params.callback;
+                        }
+                        
+                        console.log('📋 Captured Turnstile parameters:', JSON.stringify(capturedParams));
+                        
+                        // Return a dummy widget ID (2captcha requirement)
+                        return 'intercepted_widget_' + Date.now();
+                    };
+                    
+                    console.log('✅ Turnstile render function intercepted for Cloudflare Challenge pages');
+                }
+            }, 10);
+
+            // Also intercept any dynamic script loading of Turnstile API
+            const originalCreateElement = document.createElement;
+            document.createElement = function(tagName) {
+                const element = originalCreateElement.call(this, tagName);
+                
+                if (tagName.toLowerCase() === 'script') {
+                    const originalSetSrc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src').set;
+                    Object.defineProperty(element, 'src', {
+                        set: function(value) {
+                            if (value && value.includes('challenges.cloudflare.com/turnstile')) {
+                                console.log('🔍 Turnstile API script detected:', value);
+                                // Let the script load normally, our interceptor will handle it
+                            }
+                            originalSetSrc.call(this, value);
+                        },
+                        get: function() {
+                            return this.getAttribute('src');
+                        }
+                    });
+                }
+                
+                return element;
+            };
         """)
         
         # Block unnecessary resources for performance
