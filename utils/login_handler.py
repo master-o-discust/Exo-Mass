@@ -38,13 +38,30 @@ class LoginHandler:
                     pass
                 return False, {'error': 'Failed to navigate to login page'}
             
+            # Check for challenges before filling form
+            await self.check_and_handle_challenges_anywhere(page, email, "before_form_fill")
+            
             # Fill login form
             if not await self._fill_login_form(page, email, password):
-                try:
-                    await self.turnstile_handler.take_screenshot_and_upload(page, f"{email}_fill_form_failed")
-                except Exception:
-                    pass
-                return False, {'error': 'Failed to fill login form'}
+                # Before reporting failure, check if we're on a challenge page
+                logger.warning(f"⚠️ {email} - Form filling failed, checking for challenges...")
+                if await self.check_and_handle_challenges_anywhere(page, email, "form_fill_failed"):
+                    # Challenge was solved, try form filling again
+                    logger.info(f"🔄 {email} - Retrying form fill after challenge resolution...")
+                    if await self._fill_login_form(page, email, password):
+                        logger.info(f"✅ {email} - Form filled successfully after challenge resolution")
+                    else:
+                        try:
+                            await self.turnstile_handler.take_screenshot_and_upload(page, f"{email}_fill_form_failed_after_challenge")
+                        except Exception:
+                            pass
+                        return False, {'error': 'Failed to fill login form even after challenge resolution'}
+                else:
+                    try:
+                        await self.turnstile_handler.take_screenshot_and_upload(page, f"{email}_fill_form_failed")
+                    except Exception:
+                        pass
+                    return False, {'error': 'Failed to fill login form'}
             
             # Form filling now includes sign in button clicking and challenge handling
             logger.info(f"✅ {email} - Login form processing completed")
@@ -360,8 +377,25 @@ class LoginHandler:
                         logger.error(f"❌ {email} - Password field not found")
                         raise Exception("Password field not found")
                 except Exception as e:
-                    logger.error(f"❌ {email} - Failed to fill password: {e}")
-                    raise Exception("Failed to fill password field")
+                    # Before failing, check if we're on a challenge page
+                    logger.warning(f"⚠️ {email} - Failed to fill password, checking for challenges...")
+                    if await self.check_and_handle_challenges_anywhere(page, email, "password_fill_failed"):
+                        # Challenge was solved, try again
+                        try:
+                            await page.wait_for_selector('input[type="password"]', timeout=10000)
+                            password_input = await page.query_selector('input[type="password"]')
+                            if password_input and await password_input.is_visible() and await password_input.is_enabled():
+                                await password_input.fill(password)
+                                logger.info(f"✅ {email} - Password filled after challenge resolution")
+                            else:
+                                logger.error(f"❌ {email} - Password field still not interactive after challenge resolution")
+                                raise Exception("Password field not interactive after challenge resolution")
+                        except Exception as retry_e:
+                            logger.error(f"❌ {email} - Failed to fill password even after challenge resolution: {retry_e}")
+                            raise Exception("Failed to fill password field after challenge resolution")
+                    else:
+                        logger.error(f"❌ {email} - Failed to fill password: {e}")
+                        raise Exception("Failed to fill password field")
                 
                 # STEP 4: Click Sign in button immediately after password is filled
                 logger.info(f"🚀 {email} - Step 4: Clicking Sign in button...")
@@ -458,8 +492,19 @@ class LoginHandler:
                         await page.wait_for_selector('input[id="email"]', timeout=10000)
                         logger.info(f"✅ {email} - Email field found via id attribute")
                     except Exception as e3:
-                        logger.error(f"❌ {email} - Could not find email field with any selector")
-                        raise Exception("Email field not found")
+                        # Before failing, check if we're on a challenge page
+                        logger.warning(f"⚠️ {email} - Could not find email field, checking for challenges...")
+                        if await self.check_and_handle_challenges_anywhere(page, email, "email_field_not_found"):
+                            # Challenge was solved, try again
+                            try:
+                                await page.wait_for_selector('input[type="email"]', timeout=10000)
+                                logger.info(f"✅ {email} - Email field found after challenge resolution")
+                            except:
+                                logger.error(f"❌ {email} - Email field still not found after challenge resolution")
+                                raise Exception("Email field not found even after challenge resolution")
+                        else:
+                            logger.error(f"❌ {email} - Could not find email field and no challenges detected")
+                            raise Exception("Email field not found")
             
             # Find and fill email field - prioritize exact selectors found by debug script
             email_selectors = [
@@ -557,8 +602,28 @@ class LoginHandler:
                     continue
             
             if not password_filled:
-                logger.info(f"❌ {email} - Could not find interactive password field")
-                return False
+                # Before failing, check if we're on a challenge page
+                logger.warning(f"⚠️ {email} - Could not find password field, checking for challenges...")
+                if await self.check_and_handle_challenges_anywhere(page, email, "password_field_not_found"):
+                    # Challenge was solved, try again
+                    for selector in password_selectors:
+                        try:
+                            await page.wait_for_selector(selector, timeout=5000)
+                            password_field = await page.query_selector(selector)
+                            if password_field and await password_field.is_visible() and await password_field.is_enabled():
+                                await password_field.fill(password)
+                                password_filled = True
+                                logger.info(f"✅ {email} - Password field found and filled after challenge resolution")
+                                break
+                        except:
+                            continue
+                    
+                    if not password_filled:
+                        logger.error(f"❌ {email} - Password field still not found after challenge resolution")
+                        return False
+                else:
+                    logger.error(f"❌ {email} - Could not find password field and no challenges detected")
+                    return False
             
             # Small delay after filling
             await asyncio.sleep(random.uniform(0.5, 1.0))
@@ -861,6 +926,58 @@ class LoginHandler:
             logger.warning(f"⚠️ {email} - Manual challenge interaction error: {e}")
             return False
     
+    async def check_and_handle_challenges_anywhere(self, page: Any, email: str, context: str = "unknown") -> bool:
+        """
+        UNIVERSAL CHALLENGE DETECTOR - Can be called at ANY point during login process
+        This method stops the automated browser, detects challenges, solves them, then continues
+        """
+        try:
+            logger.info(f"🔍 {email} - [{context}] Checking for Cloudflare challenges...")
+            
+            # Quick check first - if no challenge, return immediately
+            if not await self._has_cloudflare_challenge(page):
+                current_url = page.url
+                page_title = await page.title()
+                
+                # Additional checks for challenge indicators
+                challenge_indicators = [
+                    "challenges.cloudflare.com" in current_url,
+                    "cf-challenge" in current_url,
+                    "just a moment" in page_title.lower(),
+                    "checking your browser" in page_title.lower(),
+                    "please wait" in page_title.lower(),
+                    "cloudflare" in page_title.lower()
+                ]
+                
+                if not any(challenge_indicators):
+                    logger.info(f"✅ {email} - [{context}] No challenges detected, continuing...")
+                    return True
+            
+            # Challenge detected - stop automated browser and handle it
+            logger.warning(f"🛡️ {email} - [{context}] CHALLENGE DETECTED! Stopping automated browser...")
+            
+            # Take screenshot for debugging
+            try:
+                await self.turnstile_handler.take_screenshot_and_upload(page, f"{email}_challenge_detected_{context}")
+            except:
+                pass
+            
+            # Handle the challenge using comprehensive method
+            challenge_result = await self._handle_comprehensive_challenges(page, email)
+            
+            if challenge_result:
+                logger.info(f"✅ {email} - [{context}] Challenge solved successfully! Resuming automation...")
+                # Wait a moment for page to stabilize after challenge resolution
+                await asyncio.sleep(3)
+                return True
+            else:
+                logger.error(f"❌ {email} - [{context}] Failed to solve challenge!")
+                return False
+                
+        except Exception as e:
+            logger.error(f"❌ {email} - [{context}] Error during challenge detection: {e}")
+            return False
+
     async def _handle_comprehensive_challenges(self, page: Any, email: str) -> bool:
         """
         COMPREHENSIVE CHALLENGE HANDLER - ACTUALLY WORKS

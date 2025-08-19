@@ -116,7 +116,7 @@ class TurnstileTester:
         logger.info("API documentation available at http://localhost:5000/")
 
         try:
-            app = create_app(debug=debug, headless=headless, useragent=useragent, browser_type=browser_type, thread=thread)
+            app = create_app(debug=debug, headless=headless, useragent=useragent, browser_type=browser_type, thread=thread, proxy_support=True)
             import hypercorn.asyncio
             config = hypercorn.Config()
             config.bind = ["127.0.0.1:5000"]

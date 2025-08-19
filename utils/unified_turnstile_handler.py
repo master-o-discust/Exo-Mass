@@ -105,16 +105,56 @@ async def detect_turnstile_challenge(page: Page, max_wait_time: int = 30) -> Dic
     if DEBUG_ENHANCED_FEATURES:
         logger.info("🔍 Phase 2: Waiting for dynamic Turnstile content...")
     
-    check_interval = 2  # Check every 2 seconds
+    check_interval = 1  # Check every 1 second for faster detection
     checks_performed = 0
     
     while time.time() - start_time < max_wait_time:
         await asyncio.sleep(check_interval)
         checks_performed += 1
         
-        if DEBUG_ENHANCED_FEATURES and checks_performed % 3 == 0:  # Log every 6 seconds
+        # Force page to execute any pending JavaScript and trigger Turnstile loading
+        try:
+            await page.evaluate("""
+                () => {
+                    // Force document ready state check
+                    if (document.readyState === 'complete') {
+                        // Try to trigger any pending Turnstile initialization
+                        if (window.turnstile && window.turnstile.render) {
+                            console.log('Turnstile API available');
+                        }
+                        
+                        // Check for any pending challenge widgets
+                        const challengeElements = document.querySelectorAll('[data-sitekey], .cf-turnstile, .turnstile-wrapper');
+                        if (challengeElements.length > 0) {
+                            console.log('Found challenge elements:', challengeElements.length);
+                        }
+                        
+                        // Trigger any pending iframe loads
+                        const iframes = document.querySelectorAll('iframe');
+                        iframes.forEach(iframe => {
+                            if (iframe.src && iframe.src.includes('challenges.cloudflare.com')) {
+                                console.log('Found Cloudflare challenge iframe');
+                            }
+                        });
+                    }
+                    return document.readyState;
+                }
+            """)
+        except:
+            pass
+        
+        if DEBUG_ENHANCED_FEATURES and checks_performed % 6 == 0:  # Log every 6 seconds
             elapsed = int(time.time() - start_time)
             logger.info(f"🔄 Still searching for Turnstile... ({elapsed}s elapsed)")
+            
+            # Also log page state for debugging
+            try:
+                current_url = page.url
+                page_title = await page.title()
+                logger.info(f"   Current URL: {current_url}")
+                logger.info(f"   Page title: {page_title}")
+            except:
+                pass
         
         # Check primary patterns first
         challenge_info = await _check_turnstile_patterns(page, primary_patterns)
@@ -249,114 +289,215 @@ class UnifiedTurnstileHandler:
             return {"detected": False, "error": str(e)}
     
     async def solve_with_turnstile_solver(self, challenge_info: Dict[str, Any]) -> Dict[str, Any]:
-        """Method 1: Solve using the primary Turnstile solver HTTP API"""
+        """Method 1: Solve using the primary Turnstile solver HTTP API with retry on failure"""
         if not challenge_info.get("sitekey"):
             return {"success": False, "error": "No sitekey available for Turnstile solver"}
         
-        try:
-            if DEBUG_ENHANCED_FEATURES:
-                logger.info("🚀 Attempting primary Turnstile solver via HTTP API...")
-            
-            start_time = time.time()
-            
-            # Build request URL for Turnstile API
-            api_url = f"http://{TURNSTILE_SERVICE_HOST}:{TURNSTILE_SERVICE_PORT}/turnstile"
-            params = {
-                "url": challenge_info["url"],
-                "sitekey": challenge_info["sitekey"]
-            }
-            
-            # Add optional parameters if present
-            if challenge_info.get("action"):
-                params["action"] = challenge_info["action"]
-            if challenge_info.get("cdata"):
-                params["cdata"] = challenge_info["cdata"]
-            
-            # Make initial request to start solving
-            async with aiohttp.ClientSession() as session:
-                async with session.get(api_url, params=params, timeout=aiohttp.ClientTimeout(total=10)) as response:
-                    if response.status != 202:
-                        error_text = await response.text()
-                        return {"success": False, "error": f"Turnstile API error: {response.status} - {error_text}"}
+        page = challenge_info.get('page')
+        max_retries = 3  # Maximum number of retries on CAPTCHA_FAIL
+        
+        for retry_attempt in range(max_retries + 1):  # +1 for initial attempt
+            try:
+                if retry_attempt > 0:
+                    if DEBUG_ENHANCED_FEATURES:
+                        logger.info(f"🔄 Retry attempt {retry_attempt}/{max_retries} - Refreshing page for new challenge...")
                     
-                    result_data = await response.json()
-                    task_id = result_data.get("task_id")
-                    
-                    if not task_id:
-                        return {"success": False, "error": "No task ID received from Turnstile API"}
-            
-            if DEBUG_ENHANCED_FEATURES:
-                logger.info(f"🔄 Turnstile task created with ID: {task_id}")
-            
-            # Poll for results
-            result_url = f"http://{TURNSTILE_SERVICE_HOST}:{TURNSTILE_SERVICE_PORT}/result"
-            max_attempts = TURNSTILE_TIMEOUT  # Use timeout setting as max attempts (1 attempt per second)
-            
-            for attempt in range(max_attempts):
-                await asyncio.sleep(1)  # Wait 1 second between polls
-                
-                try:
-                    async with aiohttp.ClientSession() as session:
-                        async with session.get(result_url, params={"id": task_id}, timeout=aiohttp.ClientTimeout(total=5)) as response:
-                            if response.status == 200:
-                                # Turnstile API returns plain text, not JSON
-                                token = await response.text()
-                                token = token.strip()  # Remove any whitespace
-                                
-                                # Check if we have a successful result
-                                if token and token != "CAPTCHA_NOT_READY" and token != "CAPTCHA_FAIL":
-                                    elapsed_time = round(time.time() - start_time, 3)
-                                    
+                    if page:
+                        try:
+                            # Refresh the page to get a new challenge
+                            await page.reload(wait_until="domcontentloaded", timeout=30000)
+                            await asyncio.sleep(3)  # Wait for challenge to load
+                            
+                            # Check what type of page we're on after refresh
+                            page_info = await self.detect_page_type(page)
+                            
+                            if DEBUG_ENHANCED_FEATURES:
+                                logger.info(f"📄 After refresh - Page type: {page_info['page_type']}, Title: {page_info['title']}")
+                            
+                            if not page_info['is_challenge_page']:
+                                # We're no longer on a challenge page
+                                if page_info['is_login_page']:
                                     if DEBUG_ENHANCED_FEATURES:
-                                        logger.info(f"✅ Primary Turnstile solver successful in {elapsed_time}s")
-                                    
+                                        logger.info("✅ Page refresh bypassed challenge - now on login page!")
                                     return {
                                         "success": True,
-                                        "token": token,
-                                        "method": "turnstile_solver",
-                                        "elapsed_time": elapsed_time
+                                        "method": "page_refresh_bypass",
+                                        "status": "challenge_bypassed_by_refresh",
+                                        "retry_attempt": retry_attempt
                                     }
-                                elif token == "CAPTCHA_FAIL":
+                                elif page_info['is_account_page']:
+                                    if DEBUG_ENHANCED_FEATURES:
+                                        logger.info("✅ Page refresh bypassed challenge - now on account page!")
+                                    return {
+                                        "success": True,
+                                        "method": "page_refresh_bypass",
+                                        "status": "challenge_bypassed_to_account",
+                                        "retry_attempt": retry_attempt
+                                    }
+                                else:
+                                    if DEBUG_ENHANCED_FEATURES:
+                                        logger.info(f"ℹ️ Page refresh led to {page_info['page_type']} page - continuing login process")
+                                    return {
+                                        "success": True,
+                                        "method": "page_refresh_redirect",
+                                        "status": f"redirected_to_{page_info['page_type']}",
+                                        "retry_attempt": retry_attempt
+                                    }
+                            
+                            # Still on challenge page - try to extract new sitekey
+                            from .enhanced_sitekey_extractor import EnhancedSitekeyExtractor
+                            extractor = EnhancedSitekeyExtractor()
+                            new_sitekey = await extractor.extract_sitekey(page)
+                            
+                            if new_sitekey:
+                                challenge_info["sitekey"] = new_sitekey
+                                if DEBUG_ENHANCED_FEATURES:
+                                    logger.info(f"✅ New sitekey extracted after refresh: {new_sitekey}")
+                            else:
+                                if DEBUG_ENHANCED_FEATURES:
+                                    logger.warning("⚠️ Could not extract new sitekey after refresh, using original")
+                                    
+                        except Exception as refresh_error:
+                            if DEBUG_ENHANCED_FEATURES:
+                                logger.warning(f"⚠️ Page refresh failed: {refresh_error}")
+                            # Continue with original challenge info
+                
+                if DEBUG_ENHANCED_FEATURES:
+                    attempt_text = f" (attempt {retry_attempt + 1}/{max_retries + 1})" if retry_attempt > 0 else ""
+                    logger.info(f"🚀 Attempting primary Turnstile solver via HTTP API{attempt_text}...")
+                
+                start_time = time.time()
+                
+                # Build request URL for Turnstile API
+                api_url = f"http://{TURNSTILE_SERVICE_HOST}:{TURNSTILE_SERVICE_PORT}/turnstile"
+                params = {
+                    "url": challenge_info["url"],
+                    "sitekey": challenge_info["sitekey"]
+                }
+                
+                # Add optional parameters if present
+                if challenge_info.get("action"):
+                    params["action"] = challenge_info["action"]
+                if challenge_info.get("cdata"):
+                    params["cdata"] = challenge_info["cdata"]
+                
+                # Make initial request to start solving
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(api_url, params=params, timeout=aiohttp.ClientTimeout(total=10)) as response:
+                        if response.status != 202:
+                            error_text = await response.text()
+                            if retry_attempt < max_retries:
+                                if DEBUG_ENHANCED_FEATURES:
+                                    logger.warning(f"⚠️ API error, will retry: {response.status} - {error_text}")
+                                continue
+                            return {"success": False, "error": f"Turnstile API error: {response.status} - {error_text}"}
+                        
+                        result_data = await response.json()
+                        task_id = result_data.get("task_id")
+                        
+                        if not task_id:
+                            if retry_attempt < max_retries:
+                                if DEBUG_ENHANCED_FEATURES:
+                                    logger.warning("⚠️ No task ID received, will retry")
+                                continue
+                            return {"success": False, "error": "No task ID received from Turnstile API"}
+                
+                if DEBUG_ENHANCED_FEATURES:
+                    logger.info(f"🔄 Turnstile task created with ID: {task_id}")
+                
+                # Poll for results
+                result_url = f"http://{TURNSTILE_SERVICE_HOST}:{TURNSTILE_SERVICE_PORT}/result"
+                max_attempts = TURNSTILE_TIMEOUT  # Use timeout setting as max attempts (1 attempt per second)
+                
+                for attempt in range(max_attempts):
+                    await asyncio.sleep(1)  # Wait 1 second between polls
+                    
+                    try:
+                        async with aiohttp.ClientSession() as session:
+                            async with session.get(result_url, params={"id": task_id}, timeout=aiohttp.ClientTimeout(total=5)) as response:
+                                if response.status == 200:
+                                    # Turnstile API returns plain text, not JSON
+                                    token = await response.text()
+                                    token = token.strip()  # Remove any whitespace
+                                    
+                                    # Check if we have a successful result
+                                    if token and token != "CAPTCHA_NOT_READY" and token != "CAPTCHA_FAIL":
+                                        elapsed_time = round(time.time() - start_time, 3)
+                                        
+                                        if DEBUG_ENHANCED_FEATURES:
+                                            logger.info(f"✅ Primary Turnstile solver successful in {elapsed_time}s")
+                                        
+                                        return {
+                                            "success": True,
+                                            "token": token,
+                                            "method": "turnstile_solver",
+                                            "elapsed_time": elapsed_time,
+                                            "retry_attempt": retry_attempt
+                                        }
+                                    elif token == "CAPTCHA_FAIL":
+                                        elapsed_time = round(time.time() - start_time, 3)
+                                        if retry_attempt < max_retries:
+                                            if DEBUG_ENHANCED_FEATURES:
+                                                logger.warning(f"❌ CAPTCHA_FAIL received, will refresh page and retry ({retry_attempt + 1}/{max_retries})")
+                                            break  # Break out of polling loop to retry with page refresh
+                                        else:
+                                            return {
+                                                "success": False,
+                                                "error": f"Turnstile solver failed after {max_retries + 1} attempts",
+                                                "elapsed_time": elapsed_time
+                                            }
+                                    # If CAPTCHA_NOT_READY, continue polling
+                                elif response.status == 422:
+                                    # Challenge failed
                                     elapsed_time = round(time.time() - start_time, 3)
+                                    if retry_attempt < max_retries:
+                                        if DEBUG_ENHANCED_FEATURES:
+                                            logger.warning(f"⚠️ Challenge failed (422), will retry")
+                                        break  # Break out of polling loop to retry
                                     return {
                                         "success": False,
-                                        "error": "Turnstile solver failed to solve challenge",
+                                        "error": "Turnstile challenge failed",
                                         "elapsed_time": elapsed_time
                                     }
-                                # If CAPTCHA_NOT_READY, continue polling
-                            elif response.status == 422:
-                                # Challenge failed
-                                elapsed_time = round(time.time() - start_time, 3)
-                                return {
-                                    "success": False,
-                                    "error": "Turnstile challenge failed",
-                                    "elapsed_time": elapsed_time
-                                }
-                            elif response.status == 400:
-                                error_text = await response.text()
-                                return {"success": False, "error": f"Invalid task ID: {error_text}"}
-                                
-                except asyncio.TimeoutError:
-                    if DEBUG_ENHANCED_FEATURES:
-                        logger.warning(f"⚠️ Turnstile API timeout on attempt {attempt + 1}")
-                    continue
-                except Exception as poll_error:
-                    if DEBUG_ENHANCED_FEATURES:
-                        logger.warning(f"⚠️ Turnstile API poll error: {poll_error}")
-                    continue
-            
-            # Timeout reached
-            elapsed_time = round(time.time() - start_time, 3)
-            return {
-                "success": False,
-                "error": f"Turnstile solver timeout after {elapsed_time}s",
-                "elapsed_time": elapsed_time
-            }
+                                elif response.status == 400:
+                                    error_text = await response.text()
+                                    return {"success": False, "error": f"Invalid task ID: {error_text}"}
+                                    
+                    except asyncio.TimeoutError:
+                        if DEBUG_ENHANCED_FEATURES:
+                            logger.warning(f"⚠️ Turnstile API timeout on attempt {attempt + 1}")
+                        continue
+                    except Exception as poll_error:
+                        if DEBUG_ENHANCED_FEATURES:
+                            logger.warning(f"⚠️ Turnstile API poll error: {poll_error}")
+                        continue
                 
-        except Exception as e:
-            elapsed_time = round(time.time() - start_time, 3) if 'start_time' in locals() else 0
-            logger.error(f"❌ Turnstile solver HTTP API error: {str(e)}")
-            return {"success": False, "error": str(e), "elapsed_time": elapsed_time}
+                # If we reach here, polling timed out
+                if retry_attempt < max_retries:
+                    elapsed_time = round(time.time() - start_time, 3)
+                    if DEBUG_ENHANCED_FEATURES:
+                        logger.warning(f"⚠️ Solver timeout after {elapsed_time}s, will refresh and retry")
+                    continue
+                
+                # Final timeout
+                elapsed_time = round(time.time() - start_time, 3)
+                return {
+                    "success": False,
+                    "error": f"Turnstile solver timeout after {elapsed_time}s (tried {max_retries + 1} times)",
+                    "elapsed_time": elapsed_time
+                }
+                    
+            except Exception as e:
+                elapsed_time = round(time.time() - start_time, 3) if 'start_time' in locals() else 0
+                if retry_attempt < max_retries:
+                    if DEBUG_ENHANCED_FEATURES:
+                        logger.warning(f"⚠️ Solver error, will retry: {str(e)}")
+                    continue
+                logger.error(f"❌ Turnstile solver HTTP API error: {str(e)}")
+                return {"success": False, "error": str(e), "elapsed_time": elapsed_time}
+        
+        # Should never reach here, but just in case
+        return {"success": False, "error": "Maximum retries exceeded"}
     
     async def solve_with_botsforge(self, challenge_info: Dict[str, Any]) -> Dict[str, Any]:
         """Method 2: Solve using BotsForge CloudFlare solver HTTP API"""
@@ -625,6 +766,147 @@ class UnifiedTurnstileHandler:
             logger.error(f"❌ Patchright + Camoufox bypasser error: {str(e)}")
             return {"success": False, "error": str(e)}
     
+    async def solve_challenge_with_visible_browser(self, page: Page, challenge_info: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Create a visible browser to solve challenges when headless mode fails
+        This ensures Turnstile widgets can load properly
+        """
+        try:
+            logger.info("🔧 Creating visible browser for challenge solving...")
+            
+            # Import browser manager
+            from utils.browser_manager import BrowserManager
+            
+            # Create a new browser manager instance for visible browser
+            visible_browser_manager = BrowserManager([self.proxy] if self.proxy else [])
+            await visible_browser_manager.initialize()
+            
+            # Create visible browser
+            visible_browser = await visible_browser_manager.create_visible_browser_for_challenges(self.proxy)
+            
+            # Create context with proper settings for Turnstile
+            visible_context = await visible_browser.new_context(
+                user_agent=self.user_agent,
+                viewport={"width": 1280, "height": 720},  # Desktop viewport for better widget rendering
+                locale="en-US",
+                timezone_id="America/New_York",
+                java_script_enabled=True,
+                permissions=["geolocation", "notifications"]
+            )
+            
+            # Create new page
+            visible_page = await visible_context.new_page()
+            
+            try:
+                # Navigate to the same URL as the original page
+                current_url = page.url
+                logger.info(f"🌐 Navigating visible browser to: {current_url}")
+                await visible_page.goto(current_url, wait_until="domcontentloaded", timeout=30000)
+                
+                # Wait for page to stabilize
+                await asyncio.sleep(3)
+                
+                # Take screenshot to see what's loaded
+                try:
+                    await self.take_screenshot_and_upload(visible_page, "visible_browser_challenge_page")
+                except:
+                    pass
+                
+                # Now try to detect and solve the challenge in the visible browser
+                logger.info("🔍 Detecting Turnstile challenge in visible browser...")
+                
+                # Wait for Turnstile widget to appear
+                turnstile_detected = False
+                max_wait = 30
+                wait_time = 0
+                
+                while wait_time < max_wait and not turnstile_detected:
+                    # Check for Turnstile iframe
+                    turnstile_iframes = await visible_page.query_selector_all('iframe[src*="challenges.cloudflare.com"]')
+                    if turnstile_iframes:
+                        logger.info("✅ Turnstile iframe detected in visible browser!")
+                        turnstile_detected = True
+                        break
+                    
+                    # Check for Turnstile widget
+                    turnstile_widgets = await visible_page.query_selector_all('[data-sitekey], .cf-turnstile, .turnstile-wrapper')
+                    if turnstile_widgets:
+                        logger.info("✅ Turnstile widget detected in visible browser!")
+                        turnstile_detected = True
+                        break
+                    
+                    await asyncio.sleep(1)
+                    wait_time += 1
+                
+                if turnstile_detected:
+                    logger.info("🎯 Turnstile widget found! Attempting to solve...")
+                    
+                    # Extract sitekey from visible page
+                    sitekey_extractor = EnhancedSitekeyExtractor()
+                    sitekey = await sitekey_extractor.extract_sitekey(visible_page)
+                    
+                    if sitekey:
+                        logger.info(f"🔑 Extracted sitekey: {sitekey}")
+                        
+                        # Try to solve using the primary solver
+                        challenge_data = {
+                            "url": current_url,
+                            "sitekey": sitekey,
+                            "user_agent": self.user_agent,
+                            "proxy": self.proxy
+                        }
+                        
+                        # Use the primary turnstile solver
+                        result = await self._use_turnstile_solver(challenge_data)
+                        
+                        if result.get("success"):
+                            logger.info("✅ Challenge solved successfully with visible browser!")
+                            
+                            # Copy the solution back to the original page if needed
+                            token = result.get("token")
+                            if token:
+                                try:
+                                    # Try to inject the token into the original page
+                                    await page.evaluate(f"""
+                                        // Try to find and fill the cf-turnstile-response field
+                                        const responseField = document.querySelector('[name="cf-turnstile-response"]');
+                                        if (responseField) {{
+                                            responseField.value = '{token}';
+                                        }}
+                                        
+                                        // Trigger any necessary events
+                                        const event = new Event('change', {{ bubbles: true }});
+                                        if (responseField) responseField.dispatchEvent(event);
+                                    """)
+                                    logger.info("✅ Token injected into original page")
+                                except Exception as e:
+                                    logger.warning(f"⚠️ Could not inject token into original page: {e}")
+                            
+                            return result
+                        else:
+                            logger.warning("❌ Challenge solving failed even with visible browser")
+                            return {"success": False, "error": "Challenge solving failed in visible browser"}
+                    else:
+                        logger.warning("❌ Could not extract sitekey from visible browser")
+                        return {"success": False, "error": "No sitekey found in visible browser"}
+                else:
+                    logger.warning("❌ No Turnstile widget found in visible browser")
+                    return {"success": False, "error": "No Turnstile widget found in visible browser"}
+                    
+            finally:
+                # Clean up visible browser resources
+                try:
+                    await visible_page.close()
+                    await visible_context.close()
+                    await visible_browser.close()
+                    await visible_browser_manager.cleanup()
+                except Exception as e:
+                    logger.warning(f"⚠️ Error cleaning up visible browser: {e}")
+                    
+        except Exception as e:
+            logger.error(f"❌ Error in visible browser challenge solving: {e}")
+            return {"success": False, "error": str(e)}
+
     async def _use_drission_bypasser(self, challenge_info: Dict[str, Any], components: Dict) -> Dict[str, Any]:
         """Use DrissionPage with CloudFlare bypasser (fallback)"""
         try:
@@ -727,6 +1009,62 @@ class UnifiedTurnstileHandler:
             logger.error(f"❌ Error taking screenshot or uploading: {str(e)}")
             return None
     
+    async def detect_page_type(self, page: Page) -> Dict[str, Any]:
+        """Detect what type of page we're currently on"""
+        try:
+            current_title = await page.title()
+            current_url = page.url
+            
+            # Check for challenge page
+            is_challenge_page = (
+                "Just a moment" in current_title or 
+                "challenge" in current_title.lower() or
+                "cloudflare" in current_title.lower() or
+                current_url.find("challenge") != -1 or
+                "checking your browser" in current_title.lower()
+            )
+            
+            # Check for login page
+            is_login_page = (
+                "login" in current_url.lower() or
+                "sign in" in current_title.lower() or
+                ("epic games" in current_title.lower() and "login" in current_title.lower()) or
+                current_url.endswith("/id/login") or
+                current_url.find("/id/login") != -1
+            )
+            
+            # Check for account/dashboard page (successful login)
+            is_account_page = (
+                "account" in current_url.lower() or
+                "dashboard" in current_url.lower() or
+                "profile" in current_url.lower() or
+                current_url.find("/account/") != -1
+            )
+            
+            return {
+                "title": current_title,
+                "url": current_url,
+                "is_challenge_page": is_challenge_page,
+                "is_login_page": is_login_page,
+                "is_account_page": is_account_page,
+                "page_type": (
+                    "challenge" if is_challenge_page else
+                    "login" if is_login_page else
+                    "account" if is_account_page else
+                    "unknown"
+                )
+            }
+        except Exception as e:
+            logger.error(f"❌ Error detecting page type: {e}")
+            return {
+                "title": "unknown",
+                "url": "unknown", 
+                "is_challenge_page": False,
+                "is_login_page": False,
+                "is_account_page": False,
+                "page_type": "error"
+            }
+
     async def inject_turnstile_token(self, page: Page, token: str):
         """Inject the solved Turnstile token into the current page"""
         try:
@@ -765,6 +1103,39 @@ class UnifiedTurnstileHandler:
             challenge_info = await self.detect_turnstile_challenge(page)
             
             if not challenge_info.get("detected"):
+                # If no challenge detected in headless mode, try with visible browser
+                # This handles cases where Turnstile widgets don't load in headless mode
+                logger.info("🔍 No challenge detected in headless mode, trying visible browser...")
+                
+                # Check if we're on a challenge page by URL or content
+                current_url = page.url
+                page_content = await page.content()
+                
+                challenge_indicators = [
+                    "challenges.cloudflare.com" in current_url,
+                    "cf-challenge" in current_url,
+                    "just a moment" in page_content.lower(),
+                    "checking your browser" in page_content.lower(),
+                    "please wait" in page_content.lower(),
+                    "security check" in page_content.lower(),
+                    "one more step" in page_content.lower()
+                ]
+                
+                if any(challenge_indicators):
+                    logger.info("🛡️ Challenge page detected by content/URL, using visible browser...")
+                    
+                    # Set up virtual display and try visible browser
+                    from utils.virtual_display import ensure_virtual_display
+                    if ensure_virtual_display():
+                        logger.info("✅ Virtual display ready, attempting visible browser challenge solving...")
+                        visible_result = await self.solve_challenge_with_visible_browser(page, challenge_info)
+                        if visible_result.get("success"):
+                            return visible_result
+                        else:
+                            logger.warning("❌ Visible browser challenge solving also failed")
+                    else:
+                        logger.warning("⚠️ Could not set up virtual display for visible browser")
+                
                 return {"success": True, "status": "no_challenge"}
             
             # ENHANCED SITEKEY EXTRACTION - Get the ACTUAL sitekey from the current challenge
@@ -777,6 +1148,9 @@ class UnifiedTurnstileHandler:
             else:
                 logger.warning("⚠️ Could not extract sitekey from current challenge")
             
+            # Add page object to challenge_info for retry functionality
+            challenge_info['page'] = page
+            
             # Take a screenshot when a challenge is detected
             try:
                 await self.take_screenshot_and_upload(page, "turnstile_detected")
@@ -787,95 +1161,38 @@ class UnifiedTurnstileHandler:
                 logger.info("🎯 Attempting to solve Turnstile/Cloudflare challenge...")
                 logger.info(f"   Sitekey: {actual_sitekey or 'Not found'}")
             
-            # If no sitekey extracted at all, go straight to DrissionPage bypass
-            if not actual_sitekey:
-                if self.solver_manager.is_solver_available('drission_bypass'):
-                    result = self.solve_with_drission_bypass(challenge_info)
-                    if result.get('success'):
-                        # Apply cookies if any
-                        if result.get('cookies'):
-                            try:
-                                await page.context.add_cookies([
-                                    {"name": name, "value": value, "domain": urlparse(challenge_info["url"]).netloc}
-                                    for name, value in result['cookies'].items() if name and value
-                                ])
-                            except Exception as e:
-                                logger.warning(f"⚠️ Error applying cookies: {e}")
-                        return result
 
-            # Sequential solver attempts with proper error handling
+
+            # Try available solvers in order of preference
             solvers_attempted = []
             
-            # Method 1: Try primary Turnstile solver first (HTTP API) with ACTUAL sitekey
-            if actual_sitekey:
-                logger.info(f"🎯 Attempting Method 1: Primary Turnstile solver with actual sitekey: {actual_sitekey}")
+            # Method 1: Try primary Turnstile solver (HTTP API) with ACTUAL sitekey
+            if actual_sitekey and self.solver_manager.is_solver_available('turnstile_solver'):
+                logger.info(f"🎯 Trying Primary Turnstile solver with actual sitekey: {actual_sitekey}")
                 solvers_attempted.append("turnstile_solver")
                 
                 try:
+                    logger.info(f"🔧 Calling primary solver with challenge_info: {challenge_info}")
                     result = await self.solve_with_turnstile_solver(challenge_info)
+                    logger.info(f"🔧 Primary solver returned: {result}")
+                    
                     if result.get("success"):
-                        logger.info("✅ Method 1 (Turnstile solver) succeeded with actual sitekey!")
+                        logger.info("✅ Primary Turnstile solver succeeded with actual sitekey!")
                         # Inject token into page
                         if result.get("token"):
                             await self.inject_turnstile_token(page, result["token"])
                         return result
                     else:
-                        logger.warning(f"❌ Method 1 failed: {result.get('error', 'Unknown error')}")
+                        logger.error(f"❌ Primary Turnstile solver failed: {result.get('error', 'Unknown error')}")
+                        logger.error(f"❌ Full result: {result}")
                 except Exception as e:
-                    logger.error(f"❌ Method 1 exception: {e}")
-                
-                if DEBUG_ENHANCED_FEATURES:
-                    logger.warning("⚠️ Primary Turnstile solver failed, trying fallback 1...")
-            else:
-                logger.info("ℹ️ Skipping Method 1 (no sitekey available)")
+                    logger.error(f"❌ Primary Turnstile solver exception: {e}")
+                    import traceback
+                    logger.error(f"❌ Exception traceback: {traceback.format_exc()}")
             
-            # Method 2: Try BotsForge CloudFlare solver (HTTP API)
-            logger.info("🎯 Attempting Method 2: BotsForge solver...")
-            solvers_attempted.append("botsforge")
-            
-            try:
-                result = await self.solve_with_botsforge(challenge_info)
-                if result.get("success"):
-                    logger.info("✅ Method 2 (BotsForge solver) succeeded!")
-                    # Inject token into page if available
-                    if result.get("token"):
-                        await self.inject_turnstile_token(page, result["token"])
-                    return result
-                else:
-                    logger.warning(f"❌ Method 2 failed: {result.get('error', 'Unknown error')}")
-            except Exception as e:
-                logger.error(f"❌ Method 2 exception: {e}")
-            
-            if DEBUG_ENHANCED_FEATURES:
-                logger.warning("⚠️ BotsForge solver failed, trying fallback 2...")
-            
-            # Method 3: Try DrissionPage bypasser as last resort
-            if self.solver_manager.is_solver_available('drission_bypass'):
-                logger.info("🎯 Attempting Method 3: DrissionPage bypasser...")
-                solvers_attempted.append("drission_bypass")
-                
-                try:
-                    result = self.solve_with_drission_bypass(challenge_info)
-                    if result.get("success"):
-                        logger.info("✅ Method 3 (DrissionPage bypasser) succeeded!")
-                        # Apply cookies and user agent to current page if available
-                        if result.get("cookies"):
-                            try:
-                                await page.context.add_cookies([
-                                    {"name": name, "value": value, "domain": urlparse(challenge_info["url"]).netloc}
-                                    for name, value in result["cookies"].items()
-                                    if name and value
-                                ])
-                            except Exception as e:
-                                logger.warning(f"⚠️ Error applying cookies: {e}")
-                        
-                        return result
-                    else:
-                        logger.warning(f"❌ Method 3 failed: {result.get('error', 'Unknown error')}")
-                except Exception as e:
-                    logger.error(f"❌ Method 3 exception: {e}")
-            else:
-                logger.warning("⚠️ Method 3 (DrissionPage bypasser) not available")
+            # DISABLED: Fallback solvers as requested by user
+            # Only use the primary Turnstile solver method
+            logger.info("ℹ️ Fallback solvers disabled - using only primary Turnstile solver")
             
             # All methods failed
             elapsed_time = round(time.time() - start_time, 3)
