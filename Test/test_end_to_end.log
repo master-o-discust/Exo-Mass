@@ -1,0 +1,111 @@
+2025-08-19 00:58:53,900 - __main__ - INFO - 🚀 Starting Comprehensive End-to-End Test
+2025-08-19 00:58:53,900 - __main__ - INFO - ============================================================
+2025-08-19 00:58:53,900 - __main__ - INFO - Phase 1: System Initialization
+2025-08-19 00:58:53,900 - __main__ - INFO - 🚀 Initializing End-to-End Test System
+2025-08-19 00:58:53,900 - __main__ - INFO - ============================================================
+2025-08-19 00:58:53,900 - __main__ - INFO - 🔧 Initializing Solver Manager...
+2025-08-19 00:58:53,900 - utils.solver_manager - INFO - 🚀 Initializing all Turnstile/Cloudflare solvers...
+2025-08-19 00:58:54,014 - utils.solver_manager - INFO - ✅ Turnstile Solver initialized successfully
+2025-08-19 00:58:54,216 - utils.display_detector - INFO - [00:58:54] [[34mINFO[0m] -> 🖥️ No DISPLAY environment variable found
+2025-08-19 00:58:54,216 - utils.display_detector - INFO - [00:58:54] [[34mINFO[0m] -> 🖥️ Detected headless environment
+2025-08-19 00:58:54,216 - utils.display_detector - INFO - [00:58:54] [[34mINFO[0m] -> 🖥️ Browser config: headless=True, display=False, pyautogui=False
+2025-08-19 00:58:54,224 - utils.solver_manager - INFO - ✅ BotsForge CloudFlare solver initialized successfully
+2025-08-19 00:58:54,224 - utils.solver_manager - INFO - ✅ Patchright + Camoufox CloudFlare bypasser initialized successfully
+2025-08-19 00:58:54,224 - utils.solver_manager - INFO - ✅ Solver initialization complete: 3/3 solvers available
+2025-08-19 00:58:54,224 - utils.solver_manager - INFO -    ✅ turnstile_solver: Ready
+2025-08-19 00:58:54,224 - utils.solver_manager - INFO -    ✅ botsforge: Ready
+2025-08-19 00:58:54,224 - utils.solver_manager - INFO -    ✅ drission_bypass: Ready
+2025-08-19 00:58:54,224 - __main__ - INFO - 🌐 Starting Solver Services...
+2025-08-19 00:58:54,224 - utils.solver_manager - INFO - ℹ️ Turnstile service disabled in config
+2025-08-19 00:58:54,224 - utils.solver_manager - INFO - 🚀 Starting BotsForge API service
+2025-08-19 00:58:54,224 - utils.solver_manager - INFO -    Host: 127.0.0.1:5033
+2025-08-19 00:58:57,229 - utils.solver_manager - INFO - ✅ BotsForge API service started successfully!
+2025-08-19 00:58:57,229 - __main__ - INFO - 📁 Loading test data...
+2025-08-19 00:58:57,230 - __main__ - INFO - ✅ Loaded 1 proxies from Proxy.txt
+2025-08-19 00:58:57,230 - __main__ - INFO -    Proxy 1: 250712La4qP-resi-US:04***********IM@ca.proxy-jet.io:1010
+2025-08-19 00:58:57,231 - __main__ - INFO - ✅ Loaded 1 accounts from files.txt
+2025-08-19 00:58:57,231 - __main__ - INFO -    Account 1: exowinbot@icloud.com:$$******$$
+2025-08-19 00:58:57,231 - __main__ - INFO - 🔍 Initializing Account Checker...
+2025-08-19 00:58:57,277 - __main__ - INFO - ✅ System initialization complete!
+2025-08-19 00:58:57,277 - __main__ - INFO - 
+Phase 2: Browser Testing
+2025-08-19 00:58:57,277 - __main__ - INFO - 
+🌐 Testing Browser Initialization
+2025-08-19 00:58:57,277 - __main__ - INFO - ----------------------------------------
+2025-08-19 00:58:57,277 - utils.browser_manager - INFO - 🚀 Initializing enhanced browser automation
+2025-08-19 00:58:57,545 - utils.browser_manager - INFO - ✅ Using Patchright for enhanced stealth
+2025-08-19 00:58:57,545 - __main__ - INFO - ✅ Browser manager initialized successfully
+2025-08-19 00:58:57,546 - __main__ - INFO - ✅ Proxy selected: 250712La4qP-resi-US:04***********IM@ca.proxy-jet.io:1010
+2025-08-19 00:58:58,645 - __main__ - INFO - ✅ User agent generated: Mozilla/5.0 (Android 15; Mobile; rv:136.0) Gecko/1...
+2025-08-19 00:58:58,652 - __main__ - INFO - 
+Phase 3: Solver Services
+2025-08-19 00:58:58,652 - __main__ - INFO - 
+🛡️ Testing Solver Services
+2025-08-19 00:58:58,652 - __main__ - INFO - ----------------------------------------
+2025-08-19 00:58:58,654 - __main__ - INFO - ✅ BotsForge API is running
+2025-08-19 00:58:58,655 - __main__ - WARNING - ⚠️ Turnstile API not accessible: Cannot connect to host 127.0.0.1:5000 ssl:default [Connect call failed ('127.0.0.1', 5000)]
+2025-08-19 00:58:58,655 - __main__ - INFO - 
+Phase 4: Epic Games Navigation
+2025-08-19 00:58:58,655 - __main__ - INFO - 
+🎮 Testing Epic Games Navigation
+2025-08-19 00:58:58,655 - __main__ - INFO - ----------------------------------------
+2025-08-19 00:58:58,655 - utils.browser_manager - INFO - 🚀 Initializing enhanced browser automation
+2025-08-19 00:58:58,919 - utils.browser_manager - INFO - ✅ Using Patchright for enhanced stealth
+2025-08-19 00:58:58,919 - __main__ - INFO - 🔍 Testing navigation with account: exowinbot@icloud.com
+2025-08-19 00:58:58,919 - __main__ - INFO - 🌐 Using proxy: 250712La4qP-resi-US:04***********IM@ca.proxy-jet.io:1010
+2025-08-19 00:58:58,921 - __main__ - INFO - 🤖 Using user agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537...
+2025-08-19 00:58:58,921 - utils.browser_manager - INFO - 🔧 Parsed proxy: http://ca.proxy-jet.io:1010 (auth: yes)
+2025-08-19 00:59:12,486 - utils.browser_manager - INFO - ❌ Failed to launch Camoufox: 'str' object has no attribute 'is_set', falling back to Chromium
+2025-08-19 00:59:12,573 - utils.browser_manager - INFO - 🆕 Created fresh isolated context for 250712La4qP-resi-US:049NOA7a4VNHoIM@ca.proxy-jet.io:1010
+2025-08-19 00:59:12,601 - __main__ - INFO - 🌐 Navigating to Epic Games login page: https://www.epicgames.com/id/login
+2025-08-19 00:59:19,317 - __main__ - INFO - ✅ Navigation successful!
+2025-08-19 00:59:19,317 - __main__ - INFO -    Current URL: https://www.epicgames.com/id/login?prompt=select_account&display=guided
+2025-08-19 00:59:19,317 - __main__ - INFO -    Page Title: Sign in to Your Epic Games account | Epic Games
+2025-08-19 00:59:19,317 - __main__ - INFO - 🔍 Checking for Cloudflare/Turnstile challenges...
+2025-08-19 00:59:19,322 - __main__ - INFO - ✅ No obvious challenges detected
+2025-08-19 00:59:19,385 - __main__ - INFO - 📸 Screenshot saved: /workspace/project/Exo-Mass/test_navigation_screenshot.png
+2025-08-19 00:59:19,433 - __main__ - INFO - 
+Phase 5: Full Login Flow
+2025-08-19 00:59:19,433 - __main__ - INFO - 
+🔐 Testing Full Login Flow
+2025-08-19 00:59:19,433 - __main__ - INFO - ----------------------------------------
+2025-08-19 00:59:19,433 - utils.browser_manager - INFO - 🚀 Initializing enhanced browser automation
+2025-08-19 00:59:19,698 - utils.browser_manager - INFO - ✅ Using Patchright for enhanced stealth
+2025-08-19 00:59:19,698 - __main__ - INFO - 🔐 Testing full login flow with: exowinbot@icloud.com
+2025-08-19 00:59:19,698 - utils.account_checker - INFO - 🚀 exowinbot@icloud.com - Starting account check...
+2025-08-19 00:59:19,699 - utils.account_checker - INFO - ❌ exowinbot@icloud.com - Account check failed: Browser.new_context: Target page, context or browser has been closed
+2025-08-19 00:59:19,699 - utils.account_checker - WARNING - 🔧 exowinbot@icloud.com - Resource exhaustion detected, forcing cleanup...
+2025-08-19 00:59:19,700 - utils.browser_manager - INFO - 🧹 Performing enhanced cleanup (checks: 0)
+2025-08-19 00:59:19,700 - utils.browser_manager - INFO -    Memory: 172.4MB (+10.4MB)
+2025-08-19 00:59:19,700 - utils.browser_manager - INFO -    Browsers: 1, Contexts: 0
+2025-08-19 00:59:19,700 - utils.browser_manager - INFO - 🧹 Cleanup complete: 0 contexts, 0 browsers
+2025-08-19 00:59:19,700 - utils.browser_manager - INFO -    Current memory: 172.4MB
+2025-08-19 00:59:21,702 - __main__ - INFO - 🏁 Login flow completed in 2.00s
+2025-08-19 00:59:21,702 - __main__ - INFO - 📊 Result Status: error
+2025-08-19 00:59:21,702 - __main__ - INFO - 📋 Detailed Results:
+2025-08-19 00:59:21,702 - __main__ - INFO -    error: Check failed: Browser.new_context: Target page, context or browser has been closed
+2025-08-19 00:59:21,702 - __main__ - INFO -    elapsed_time: 0.0
+2025-08-19 00:59:21,702 - __main__ - INFO -    proxy_used: 250712La4qP-resi-US:049NOA7a4VNHoIM@ca.proxy-jet.io:1010
+2025-08-19 00:59:21,702 - __main__ - WARNING - ❌ Login flow test FAILED - Status: error
+2025-08-19 00:59:21,702 - __main__ - WARNING -    Error: Check failed: Browser.new_context: Target page, context or browser has been closed
+2025-08-19 00:59:21,710 - __main__ - INFO - 
+📊 COMPREHENSIVE TEST REPORT
+2025-08-19 00:59:21,710 - __main__ - INFO - ============================================================
+2025-08-19 00:59:21,710 - __main__ - INFO - 📈 Overall Score: 4/5 tests passed
+2025-08-19 00:59:21,710 - __main__ - INFO -    ✅ PASS System Initialization
+2025-08-19 00:59:21,710 - __main__ - INFO -    ✅ PASS Browser Management
+2025-08-19 00:59:21,710 - __main__ - INFO -    ✅ PASS Solver Services
+2025-08-19 00:59:21,710 - __main__ - INFO -    ✅ PASS Epic Games Navigation
+2025-08-19 00:59:21,710 - __main__ - INFO -    ❌ FAIL Full Login Flow
+2025-08-19 00:59:21,710 - __main__ - INFO - 
+🔧 System Status:
+2025-08-19 00:59:21,710 - __main__ - INFO -    Proxies: 1 loaded
+2025-08-19 00:59:21,710 - __main__ - INFO -    Accounts: 1 loaded
+2025-08-19 00:59:21,710 - __main__ - INFO -    Solvers: Available and initialized
+2025-08-19 00:59:21,710 - __main__ - INFO - 
+💡 Recommendations:
+2025-08-19 00:59:21,710 - __main__ - INFO -    - Check account credentials and solver configuration
+2025-08-19 00:59:21,710 - __main__ - INFO - 
+🎯 Test Complete!
+2025-08-19 00:59:21,710 - __main__ - INFO - ============================================================
+2025-08-19 00:59:21,710 - __main__ - INFO - 🎉 All critical tests passed!

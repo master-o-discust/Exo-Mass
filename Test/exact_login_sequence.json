@@ -1,0 +1,35 @@
+[
+  {
+    "step": 1,
+    "action": "navigate",
+    "target": "https://www.epicgames.com/id/login",
+    "result": "1 buttons, 2 inputs found"
+  },
+  {
+    "step": 2,
+    "action": "fill_email",
+    "target": "javascript",
+    "method": "evaluate",
+    "result": "success"
+  },
+  {
+    "step": 3,
+    "action": "click_continue",
+    "target": "button:has-text(\"Continue\")",
+    "text": "Sign in to Epic Games\n\nOnly played on console? Sign in to access your progress and purchases.\n\nPlayStation\u2122Network\n\nXbox network\n\nNintendo Account\n\nPlayed on PC or mobile?\n\nSign in with email\nSign in with email\nPassword\nPassword\nContinue\nNew here?\u00a0\nCreate an account\n\nOther ways to sign in\n\nGoogle\n\nSteam\n\nMyDisney Account\n\nSign in with Apple\n\nFacebook\n\nLEGO\u00ae Account\n\nTrouble signing in?\n\nPrivacy Policy",
+    "result": "success"
+  },
+  {
+    "step": 4,
+    "action": "fill_password",
+    "target": "input[type=\"password\"]",
+    "result": "success"
+  },
+  {
+    "step": 5,
+    "action": "final_submit",
+    "target": "button:has-text(\"Sign in\")",
+    "text": "Enter your password\nSign in with email\nSign in with email\n\nYou're signing in with e***t@icloud.com.\n\nPassword\nPassword\nForgot password?\nRemember me on games and apps that use Epic Games to sign in (Optional)\nSign in\n\nPrivacy Policy",
+    "result": "success"
+  }
+]
