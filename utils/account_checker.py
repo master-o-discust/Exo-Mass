@@ -88,24 +88,38 @@ class AccountChecker:
                     login_success, login_result = await login_handler.perform_login(page, email, password)
                     
                     if not login_success:
-                        # Determine the specific failure reason
-                        error_msg = login_result.get('error', 'Unknown login error')
+                        # Before determining failure reason, check if we're on a challenge page
+                        logger.warning(f"⚠️ {email} - Login failed, checking for challenges...")
+                        if await login_handler.check_and_handle_challenges_anywhere(page, email, "login_failed"):
+                            # Challenge was solved, try login again
+                            logger.info(f"🔄 {email} - Retrying login after challenge resolution...")
+                            login_success, login_result = await login_handler.perform_login(page, email, password)
+                            
+                            if login_success:
+                                logger.info(f"✅ {email} - Login successful after challenge resolution!")
+                                # Continue with successful login processing
+                            else:
+                                logger.warning(f"⚠️ {email} - Login still failed after challenge resolution")
                         
-                        if 'captcha' in error_msg.lower() or 'challenge' in error_msg.lower():
-                            status = AccountStatus.CAPTCHA
-                        elif '2fa' in error_msg.lower() or 'two-factor' in error_msg.lower():
-                            status = AccountStatus.TWO_FA
-                        elif 'invalid' in error_msg.lower() or 'credentials' in error_msg.lower():
-                            status = AccountStatus.INVALID
-                        else:
-                            status = AccountStatus.ERROR
-                        
-                        elapsed_time = round(time.time() - start_time, 2)
-                        return status, {
-                            **login_result,
-                            'elapsed_time': elapsed_time,
-                            'proxy_used': proxy
-                        }
+                        # If still not successful, determine the specific failure reason
+                        if not login_success:
+                            error_msg = login_result.get('error', 'Unknown login error')
+                            
+                            if 'captcha' in error_msg.lower() or 'challenge' in error_msg.lower():
+                                status = AccountStatus.CAPTCHA
+                            elif '2fa' in error_msg.lower() or 'two-factor' in error_msg.lower():
+                                status = AccountStatus.TWO_FA
+                            elif 'invalid' in error_msg.lower() or 'credentials' in error_msg.lower():
+                                status = AccountStatus.INVALID
+                            else:
+                                status = AccountStatus.ERROR
+                            
+                            elapsed_time = round(time.time() - start_time, 2)
+                            return status, {
+                                **login_result,
+                                'elapsed_time': elapsed_time,
+                                'proxy_used': proxy
+                            }
                     
                     # Login successful, process the account data
                     account_data = await self._process_successful_login(page, email, login_result)

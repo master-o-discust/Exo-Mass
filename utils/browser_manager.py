@@ -342,21 +342,84 @@ class BrowserManager:
         self.browser_creation_times[proxy_key] = time.time()
         return browser
     
-    async def new_context(self, browser: Any, user_agent: str = None) -> Any:
+    async def create_visible_browser_for_challenges(self, proxy: Optional[str] = None) -> Any:
+        """Create a visible (non-headless) browser specifically for solving challenges"""
+        logger.info("🔧 Creating visible browser for challenge solving...")
+        
+        # Set up virtual display for headless environments
+        from utils.virtual_display import ensure_virtual_display
+        if not ensure_virtual_display():
+            logger.warning("⚠️ Failed to start virtual display, falling back to headless mode")
+        else:
+            logger.info("✅ Virtual display ready for visible browser")
+        
+        proxy_dict = None
+        if proxy:
+            proxy_dict = self.parse_proxy(proxy)
+        
+        browser_args = [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--no-first-run',
+            '--no-zygote',
+            '--window-size=1280,720',  # Set a reasonable window size
+            '--disable-web-security',
+            '--disable-features=VizDisplayCompositor',
+            '--disable-blink-features=AutomationControlled',  # Hide automation
+            '--disable-extensions-except',
+            '--disable-plugins-discovery',
+            '--no-default-browser-check',
+            '--no-first-run',
+            '--disable-default-apps'
+        ]
+        
+        # Launch browser in visible mode (headless=False)
+        if PREFERRED_BROWSER_TYPE == "camoufox" and CAMOUFOX_AVAILABLE:
+            try:
+                camoufox_config = {
+                    'headless': False,  # Force visible mode
+                    'addons': [],
+                    'humanize': True,
+                    'geoip': True
+                }
+                
+                if proxy_dict:
+                    camoufox_config['proxy'] = proxy_dict
+                
+                browser = AsyncCamoufox(**camoufox_config)
+                await browser.launch()
+                logger.info("🦊 Launched visible Camoufox browser for challenge solving")
+                return browser
+                
+            except Exception as e:
+                logger.warning(f"❌ Failed to launch visible Camoufox: {e}, falling back to Chromium")
+        
+        # Fallback to visible Chromium
+        browser = await self.playwright.chromium.launch(
+            headless=False,  # Force visible mode
+            proxy=proxy_dict,
+            args=browser_args,
+            slow_mo=BROWSER_SLOWMO
+        )
+        logger.info("🌐 Launched visible Chromium browser for challenge solving")
+        return browser
+    
+    async def new_context(self, browser: Any, user_agent: str = None, force_visible: bool = False) -> Any:
         """Create new browser context with stealth settings"""
         if user_agent is None:
             user_agent = self.get_next_user_agent()
         
-        # Use mobile viewports for better stealth (iPhone/Android sizes)
-        mobile_viewports = [
-            {"width": 375, "height": 812},  # iPhone X/11/12/13
-            {"width": 414, "height": 896},  # iPhone 11 Pro Max/12 Pro Max
-            {"width": 390, "height": 844},  # iPhone 12/13 mini
-            {"width": 360, "height": 640},  # Android (Galaxy S8/S9)
-            {"width": 412, "height": 869},  # Android (Pixel 3/4)
-            {"width": 393, "height": 851},  # Android (Pixel 5)
+        # Use desktop viewports for better Turnstile widget support
+        # Mobile viewports can cause issues with Turnstile widget rendering
+        desktop_viewports = [
+            {"width": 1280, "height": 720},   # Standard HD
+            {"width": 1366, "height": 768},   # Common laptop
+            {"width": 1920, "height": 1080},  # Full HD
+            {"width": 1440, "height": 900},   # MacBook Pro 15"
+            {"width": 1536, "height": 864},   # Surface Pro
         ]
-        viewport = random.choice(mobile_viewports)
+        viewport = random.choice(desktop_viewports)
         
         context = await browser.new_context(
             user_agent=user_agent,
@@ -375,8 +438,9 @@ class BrowserManager:
             }
         )
         
-        # Enhanced stealth JavaScript
+        # Enhanced stealth JavaScript with Turnstile support
         await context.add_init_script("""
+            // Basic stealth
             Object.defineProperty(navigator, 'webdriver', {
                 get: () => undefined,
             });
@@ -390,11 +454,36 @@ class BrowserManager:
             });
             
             const originalQuery = window.navigator.permissions.query;
-            return window.navigator.permissions.query = (parameters) => (
+            window.navigator.permissions.query = (parameters) => (
                 parameters.name === 'notifications' ?
                     Promise.resolve({ state: Notification.permission }) :
                     originalQuery(parameters)
             );
+            
+            // Ensure proper window dimensions for Turnstile
+            Object.defineProperty(window, 'outerWidth', {
+                get: () => window.innerWidth,
+            });
+            
+            Object.defineProperty(window, 'outerHeight', {
+                get: () => window.innerHeight,
+            });
+            
+            // Ensure document is ready for Turnstile widgets
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    console.log('DOM ready for Turnstile widgets');
+                });
+            }
+            
+            // Add visibility API support for Turnstile
+            Object.defineProperty(document, 'hidden', {
+                get: () => false,
+            });
+            
+            Object.defineProperty(document, 'visibilityState', {
+                get: () => 'visible',
+            });
             
             Object.defineProperty(navigator, 'serviceWorker', {
                 get: () => ({

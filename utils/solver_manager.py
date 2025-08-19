@@ -30,9 +30,9 @@ class SolverManager:
         
     async def initialize_all_solvers(self) -> Dict[str, SolverStatus]:
         """Initialize all available solvers and return their status"""
-        logger.info("🚀 Initializing all Turnstile/Cloudflare solvers...")
+        logger.info("🚀 Checking available Turnstile/Cloudflare solvers...")
         
-        # Initialize each solver
+        # Check all available solvers (they run as separate API servers)
         await self._initialize_turnstile_solver()
         await self._initialize_botsforge_solver()
         await self._initialize_drission_bypasser()
@@ -222,111 +222,7 @@ class SolverManager:
             return None
         return self.solvers.get(solver_name)
     
-    async def start_turnstile_service(self):
-        """Start the Turnstile API service if available"""
-        if not self.is_solver_available('turnstile_solver'):
-            logger.warning("⚠️ Cannot start Turnstile service - solver not available")
-            return False
-        
-        try:
-            from config.settings import (
-                TURNSTILE_SERVICE_HOST, 
-                TURNSTILE_SERVICE_PORT, 
-                TURNSTILE_SERVICE_THREADS,
-                ENABLE_TURNSTILE_SERVICE
-            )
-            
-            if not ENABLE_TURNSTILE_SERVICE:
-                logger.info("ℹ️ Turnstile service disabled in config")
-                return False
-            
-            # Add turnstile_solver to path
-            turnstile_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'solvers', 'turnstile_solver')
-            if turnstile_path not in sys.path:
-                sys.path.insert(0, turnstile_path)
-            
-            from api_solver import create_app
-            import hypercorn.asyncio
-            
-            logger.info(f"🚀 Starting Turnstile API service")
-            logger.info(f"   Host: {TURNSTILE_SERVICE_HOST}:{TURNSTILE_SERVICE_PORT}")
-            logger.info(f"   Threads: {TURNSTILE_SERVICE_THREADS}")
-            
-            # Create the Turnstile solver app
-            app = create_app(
-                headless=True,  # Always headless for server
-                useragent=None,  # Let the service choose
-                debug=False,  # Disable debug for production
-                browser_type="camoufox",  # Force Camoufox for enhanced stealth
-                thread=TURNSTILE_SERVICE_THREADS,
-                proxy_support=True  # Enable proxy support
-            )
-            
-            # Configure hypercorn
-            config = hypercorn.Config()
-            config.bind = [f"{TURNSTILE_SERVICE_HOST}:{TURNSTILE_SERVICE_PORT}"]
-            config.use_reloader = False
-            config.access_log_format = "%(h)s %(r)s %(s)s %(b)s %(D)s"
-            
-            # Start the service in background
-            asyncio.create_task(hypercorn.asyncio.serve(app, config))
-            
-            logger.info("✅ Turnstile API service started successfully!")
-            return True
-            
-        except Exception as e:
-            logger.error(f"❌ Failed to start Turnstile service: {e}")
-            return False
-
-    async def start_botsforge_service(self):
-        """Start the BotsForge API service if available"""
-        if not self.is_solver_available("botsforge"):
-            logger.warning("⚠️ Cannot start BotsForge service - solver not available")
-            return False
-
-        try:
-            logger.info(f"🚀 Starting BotsForge API service")
-            logger.info(f"   Host: 127.0.0.1:5033")
-
-            # Set environment variables for BotsForge
-            root_dir = os.path.dirname(os.path.dirname(__file__))
-            botsforge_dir = os.path.join(root_dir, "solvers", "cloudflare_botsforge")
-            
-            # Import and start BotsForge server
-            import asyncio
-
-            # Start BotsForge server as subprocess using the fixed launcher
-            launcher_path = os.path.join(root_dir, "launch_botsforge.py")
-            cmd = [sys.executable, launcher_path]
-            
-            env = os.environ.copy()
-            env["PYTHONPATH"] = root_dir
-            env["PORT"] = "5033"
-            
-            process = await asyncio.create_subprocess_exec(
-                *cmd,
-                env=env,
-                cwd=root_dir,  # Run from root directory since launcher is there
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
-            )
-
-            # Give it a moment to start
-            await asyncio.sleep(3)
-            
-            if process.returncode is None:  # Still running
-                logger.info("✅ BotsForge API service started successfully!")
-                return True
-            else:
-                stdout, stderr = await process.communicate()
-                logger.error(f"❌ BotsForge service failed to start (exit code: {process.returncode})")
-                if stderr:
-                    logger.error(f"   Error: {stderr.decode()}")
-                return False
-
-        except Exception as e:
-            logger.error(f"❌ Failed to start BotsForge service: {e}")
-            return False
+    # Service startup methods removed - these are separate API servers that run independently
 
 
 # Global solver manager instance
